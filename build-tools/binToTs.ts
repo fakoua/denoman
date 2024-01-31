@@ -1,4 +1,4 @@
-import { join } from "https://deno.land/std@0.210.0/path/mod.ts";
+import { join } from "https://deno.land/std@0.213.0/path/mod.ts";
 import { copy } from "https://deno.land/std@0.213.0/fs/copy.ts";
 
 import { bin } from "../wwwzip/ui.ts";

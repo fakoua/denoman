@@ -1,5 +1,5 @@
 import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
-import { delay } from "https://deno.land/std@0.203.0/async/delay.ts";
+import { delay } from "https://deno.land/std@0.213.0/async/delay.ts";
 import { DependenciesModel, ServiceModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
@@ -108,11 +108,11 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
   }
   return rtnVal;
 }
-function processWmi(wmi: string, isSystemDriver: boolean): Array<ServiceModel> {
+function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
   wmi = wmi.replaceAll("\\", "|");
   const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
-  const rtnVal: Array<any> = [];
+  const rtnVal: ServiceModel[] = [];
 
   for (const match of matches) {
     const mt = `  ${match[1]}`;

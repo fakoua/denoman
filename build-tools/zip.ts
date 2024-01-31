@@ -1,4 +1,4 @@
-import { join } from "https://deno.land/std@0.133.0/path/mod.ts";
+import { join } from "https://deno.land/std@0.213.0/path/mod.ts";
 
 export const compress = async (
   files: string | string[],

@@ -1,6 +1,9 @@
+// deno-lint-ignore no-explicit-any
+type IgnoreAny = any;
+
 export type CacheEntity = {
   key: string;
-  obj: any;
+  obj: IgnoreAny;
 };
 export function has(key: string): boolean {
   const gc = openCache();
@@ -16,7 +19,7 @@ export function get<T>(key: string): T | undefined {
   return cached?.obj as T;
 }
 
-export function put(key: string, obj: any) {
+export function put(key: string, obj: IgnoreAny) {
   const gc = openCache();
   if (!has(key)) {
     gc.push({
@@ -32,8 +35,8 @@ export function put(key: string, obj: any) {
 }
 
 function openCache(): Array<CacheEntity> {
-  if ((window as any).GlobalCache === undefined) {
-    (window as any).GlobalCache = [];
+  if ((window as IgnoreAny).GlobalCache === undefined) {
+    (window as IgnoreAny).GlobalCache = [];
   }
-  return (window as any).GlobalCache as Array<CacheEntity>;
+  return (window as IgnoreAny).GlobalCache as Array<CacheEntity>;
 }

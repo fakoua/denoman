@@ -1,5 +1,9 @@
 {
-    "tasks": {
-      "start": "deno run -A mod.ts"
-    }
+  "tasks": {
+    "start": "deno run -A mod.ts"
+  },
+
+  "lint": {
+    "exclude": ["q-manui/"]
   }
+}
