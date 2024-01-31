@@ -3,14 +3,16 @@ import { delay } from "https://deno.land/std@0.213.0/async/delay.ts";
 import { DependenciesModel, ServiceModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
-export async function getServices(payload: WinRMPayload): Promise<Array<ServiceModel>> {
+export async function getServices(
+  payload: WinRMPayload,
+): Promise<Array<ServiceModel>> {
   const query =
     "Get-WmiObject win32_service | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1";
   const query_SystemDriver =
     "Get-WmiObject Win32_SystemDriver | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1";
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol}
+    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
   );
   let res = await context.runPowerShell(query);
   if (res.exitCode !== 0) {
@@ -28,12 +30,14 @@ export async function getServices(payload: WinRMPayload): Promise<Array<ServiceM
   return regularServices.concat(systemDriverServices);
 }
 
-export async function getDependsServices(payload: WinRMPayload): Promise<Array<DependenciesModel>> {
+export async function getDependsServices(
+  payload: WinRMPayload,
+): Promise<Array<DependenciesModel>> {
   const query =
     "Get-CimInstance -ClassName Win32_DependentService | Select-Object -Property Antecedent, Dependent | Format-List";
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol}
+    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
   );
 
   const res = await context.runPowerShell(query);
@@ -47,12 +51,12 @@ export async function getDependsServices(payload: WinRMPayload): Promise<Array<D
 export async function actions(
   serviceName: string,
   action: "Start" | "Stop" | "Suspend" | "Resume" | "Restart",
-  payload: WinRMPayload
+  payload: WinRMPayload,
 ): Promise<ServiceModel | undefined> {
   const command = `${action}-Service -Name ${serviceName}`;
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol}
+    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
   );
 
   const res = await context.runPowerShell(command);
@@ -62,18 +66,22 @@ export async function actions(
   }
   if (res.error === undefined && res.exitCode === 0) {
     //wait 5 sec
-  await delay(5000)
-  const service = await getService(serviceName, payload);
-  return service;
+    await delay(5000);
+    const service = await getService(serviceName, payload);
+    return service;
   }
   return undefined;
 }
 
-export async function getService(name: string, payload: WinRMPayload): Promise<ServiceModel | undefined> {
-  const query = `Get-WmiObject win32_service -Filter "Name='${name}'" | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1`;
+export async function getService(
+  name: string,
+  payload: WinRMPayload,
+): Promise<ServiceModel | undefined> {
+  const query =
+    `Get-WmiObject win32_service -Filter "Name='${name}'" | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1`;
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol}
+    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
   );
   const res = await context.runPowerShell(query);
 
@@ -84,9 +92,9 @@ export async function getService(name: string, payload: WinRMPayload): Promise<S
 
   if (res.exitCode === 0 && res.stdout.length > 10) {
     const regularServices = processWmi(res.stdout, false);
-    return regularServices[0]
+    return regularServices[0];
   }
-  return undefined
+  return undefined;
 }
 function processDependsWmi(wmi: string): Array<DependenciesModel> {
   const rtnVal: Array<DependenciesModel> = [];
@@ -123,13 +131,13 @@ function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
       delayedAutoStart: getWmiValue<boolean>(
         "DelayedAutoStart",
         "Description",
-        mt
+        mt,
       ),
       description: getWmiValue<string>("Description", "DesktopInteract", mt),
       desktopInteract: getWmiValue<boolean>(
         "DesktopInteract",
         "DisplayName",
-        mt
+        mt,
       ),
       displayName: getWmiValue<string>("DisplayName", "ErrorControl", mt),
       errorControl: getWmiValue<string>("ErrorControl", "ExitCode", mt),

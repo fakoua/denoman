@@ -16,7 +16,6 @@ import {
 } from "./src/models.ts";
 import { initServer } from "./build-tools/binToTs.ts";
 
-
 await initServer(await getWwwRoot());
 
 const router = new Router();

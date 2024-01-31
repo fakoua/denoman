@@ -83,7 +83,6 @@ interface CompressOptions {
   flags: string[];
 }
 
-
 interface DecompressOptions {
   overwrite?: boolean;
   includeFileName?: boolean;
