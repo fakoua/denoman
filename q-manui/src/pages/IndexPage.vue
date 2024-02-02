@@ -1,7 +1,7 @@
 <template>
   <q-page class="row">
     <div class="q-gutter-y-md" v-if="isLoggedIn">
-      <q-card v-if="isLoggedIn">
+      <q-card v-if="isLoggedIn" flat>
         <q-tabs
           v-model="tab"
           dense

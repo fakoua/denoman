@@ -29,6 +29,14 @@ export interface ServiceModel {
   isSystemDriver: boolean;
 }
 
+export type SystemModel = {
+  caption: string,
+  csName: string,
+  memory: string,
+  osArchitecture: string,
+  processorName: string,
+}
+
 export class ServiceType {
   constructor(readonly data?: ServiceModel) {
     if (data) {

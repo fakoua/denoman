@@ -1,35 +1,57 @@
 <template>
-  <q-splitter v-model="splitterModel" class="full-width-vw">
-    <template v-slot:before>
-      <div class="q-a-xl no-margin no-padding">
-        <service-details-component
-          :service="selectedService"
-          v-on:on-open-service="
+  <div class="container fit row wrap justify-start items-start content-start">
+    <div class="s-left">
+      <q-tabs v-model="tab" vertical>
+        <q-tab name="dashboard" icon="dashboard" />
+        <q-tab name="services" icon="miscellaneous_services" />
+      </q-tabs>
+    </div>
+    <div class="s-right col-grow">
+      <q-tab-panels v-model="tab">
+        <q-tab-panel name="dashboard">
+          <dashboard-component />
+        </q-tab-panel>
+        <q-tab-panel name="services" style="padding: 0">
+          <q-splitter
+            v-model="splitterModel"
+            class="full-width-vw"
+            separator-style="border: 1px solid white;"
+          >
+            <template v-slot:before>
+              <div class="q-a-xl no-margin no-padding">
+                <service-details-component
+                  :service="selectedService"
+                  v-on:on-open-service="
             (svr: ServiceType) => {
               openService(svr);
             }
           "
-        />
-      </div>
-    </template>
+                />
+              </div>
+            </template>
 
-    <template v-slot:after>
-      <div class="q-a-xl no-margin no-padding">
-        <services-list-component
-          v-on:on-select-service="
+            <template v-slot:after>
+              <div class="q-a-xl no-margin no-padding">
+                <services-list-component
+                  v-on:on-select-service="
             (svr: ServiceType) => {
               selectedService = svr;
             }
           "
-          v-on:on-open-service="
+                  v-on:on-open-service="
             (svr: ServiceType) => {
               openService(svr);
             }
           "
-        />
-      </div>
-    </template>
-  </q-splitter>
+                />
+              </div>
+            </template>
+          </q-splitter>
+        </q-tab-panel>
+      </q-tab-panels>
+    </div>
+  </div>
+
   <dialog id="serviceWindow" ref="serviceWindow" class="shadow-24">
     <header>
       <div class="fit row wrap justify-between items-start content-start">
@@ -57,14 +79,25 @@
   </dialog>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
+div.s-left {
+  overflow: auto;
+  min-width: 50px;
+  max-width: 50px;
+}
+div.s-right {
+  overflow: hidden;
+  width: calc(100vw - 70px);
+  height: calc(100vh - 100px);
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
 .dialog-title {
   white-space: nowrap;
   overflow: hidden;
   max-width: 355px;
 }
 .full-width-vw {
-  width: 100vw !important;
+  /*width: 100vw !important;*/
 }
 .left {
   border-right: 1px solid rgb(230, 229, 229);
@@ -134,6 +167,8 @@ import { bus } from 'boot/bus';
 import ServicesListComponent from '../components/ServicesListComponent.vue';
 import ServiceDetailsComponent from '../components/ServiceDetailsComponent.vue';
 import ServiceWindowComponent from '../components/service-window/ServiceWindowComponent.vue';
+import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
+
 import { ServiceModel, ServiceType } from './models';
 
 //import { ServiceModel, ServiceType } from './repo/models';
@@ -144,6 +179,7 @@ export default defineComponent({
     ServicesListComponent,
     ServiceDetailsComponent,
     ServiceWindowComponent,
+    DashboardComponent,
   },
   methods: {
     openService(service: ServiceType) {
@@ -183,6 +219,7 @@ export default defineComponent({
       services: ref<Array<ServiceModel>>([]),
       isDialogOpen: isDialogOpen,
       serviceWindow,
+      tab: ref('dashboard'),
     };
   },
 });

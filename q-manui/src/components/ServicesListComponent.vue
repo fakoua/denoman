@@ -146,11 +146,9 @@
 .grid-style-transition {
   transition: transform 0.28s, background-color 0.28s;
 }
-.grid-cell {
-}
 .my-sticky-header-table {
-  height: 90vh;
-  width: -webkit-fill-available;
+  height: 88vh;
+  width: calc(100vw - 354px);
 }
 .my-sticky-header-table .q-table__top,
 .my-sticky-header-table .q-table__bottom,

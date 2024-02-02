@@ -3,6 +3,7 @@ import {
   ControlAction,
   DependenciesModel,
   ServiceModel,
+  SystemModel,
   WinRMPayload,
 } from './models';
 import { useHostsStore } from 'src/stores/hosts-store';
@@ -58,6 +59,12 @@ export async function controlService(
     console.log(err);
   }
   return undefined;
+}
+
+export async function getSystemInformation(): Promise<SystemModel> {
+  const params = getPayload();
+  const res = await api.get('http://localhost:8001/api/system', { params });
+  return res.data as SystemModel;
 }
 
 function getPayload(): WinRMPayload | undefined {

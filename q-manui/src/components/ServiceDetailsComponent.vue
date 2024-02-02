@@ -117,7 +117,7 @@
 }
 .container {
   padding: 16px;
-  height: 90vh;
+  height: 88vh;
 }
 .mb-12 {
   margin-bottom: 12px;
