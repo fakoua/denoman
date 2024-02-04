@@ -5,9 +5,8 @@ await increaseUiVersion();
 buildQuasar();
 await spaToTypeScript();
 
-
 function buildQuasar() {
-  const msg = "Please go to [./q-manui] and build the project [quasar build]."
+  const msg = "Please go to [./q-manui] and build the project [quasar build].";
   alert(msg);
 }
 
@@ -17,12 +16,12 @@ async function increaseUiVersion() {
   const packageFile = "./q-manui/package.json";
   let packageJson = await Deno.readTextFile(packageFile);
   const pkg = JSON.parse(packageJson);
-  pkg.version  = newVersion;
-  pkg.description = `DenoMan ${newVersion}`
+  pkg.version = newVersion;
+  pkg.description = `DenoMan ${newVersion}`;
   packageJson = JSON.stringify(pkg, null, 2);
 
   await Deno.writeTextFile(packageFile, packageJson);
-  console.log("package.json file updated.")
+  console.log("package.json file updated.");
 }
 
 async function spaToTypeScript() {

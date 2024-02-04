@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-toolbar-title> dennoman </q-toolbar-title>
+        <q-toolbar-title> DenoMan </q-toolbar-title>
 
         <div>v 0.1</div>
       </q-toolbar>

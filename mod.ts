@@ -74,9 +74,8 @@ router.post("/api/service", async (ctx) => {
     port: Number(ctx.request.url.searchParams.get("port")!),
   };
 
-  const req = ctx.request.body({ type: "json" });
-  const reqObj = await req.value;
-  const service = await actions(reqObj.serviceName, reqObj.action, payload);
+  const req = await ctx.request.body.json();
+  const service = await actions(req.serviceName, req.action, payload);
 
   if (service !== undefined) {
     //Change the cache

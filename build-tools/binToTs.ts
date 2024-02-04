@@ -10,13 +10,13 @@ export async function initServer(wwwRoot: string): Promise<boolean> {
     const isExist = await exists(indexFile);
     if (isExist) {
       //Check for update
-      const installedVersion = await getUiVersion(indexFile)
-      
+      const installedVersion = await getUiVersion(indexFile);
+
       if (installedVersion === version) {
         return true;
       }
 
-      console.log(`Updating UI from V${installedVersion} to V${version}`)
+      console.log(`Updating UI from V${installedVersion} to V${version}`);
       //We need to remove old version
       await Deno.remove(indexFile);
       await Deno.remove(join(wwwRoot, "favicon.ico"));
@@ -66,7 +66,7 @@ export async function zipToTs(path: string, fileName: string) {
 
   const binPath = join(path, `${fileName}.zip`);
   const uint = await Deno.readFile(binPath);
-  
+
   let binary = "";
   const len = uint.length;
 
