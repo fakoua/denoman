@@ -67,3 +67,11 @@ export type WinRMPayload = {
   port: number;
   protocol: string;
 };
+
+export type ServiceStatusModel = {
+  running?: number;
+  stopped?: number;
+  automatic?: number;
+  manual?: number;
+  total?: number;
+};

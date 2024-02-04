@@ -31,162 +31,24 @@
   </div>
   <div class="full-width row justify-between">
     <div class="col-grow q-ma-sm" style="max-width: 437px">
-      <q-card flat bordered style="min-height: 268px">
-        <q-card-section class="text-indigo-6">
-          <div class="text-h6">System</div>
-          <div class="text-weight-thin">System Information</div>
-        </q-card-section>
-        <q-list bordered>
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="primary" name="laptop_windows" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label>{{ model.system?.csName }}</q-item-label>
-              <q-item-label caption lines="2" style="font-size: 11px">{{
-                model.system?.caption
-              }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="primary" name="storage" />
-            </q-item-section>
-
-            <q-item-section style="font-size: 12px"
-              >{{ model.system?.processorName }} ({{
-                model.system?.osArchitecture
-              }})</q-item-section
-            >
-          </q-item>
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="primary" name="memory" />
-            </q-item-section>
-
-            <q-item-section>{{ model.system?.memory }} RAM</q-item-section>
-          </q-item>
-        </q-list>
-      </q-card>
+      <system-info-component :system="model.system" :loading="isLoading" />
     </div>
     <div class="col-grow q-ma-sm">
-      <q-card flat bordered>
-        <q-card-section class="text-blue-6">
-          <div class="text-h6">Logon as</div>
-          <div class="text-weight-thin">Logon distribution</div>
-        </q-card-section>
-        <div class="critical-table">
-          <q-markup-table dense flat>
-            <tbody>
-              <tr>
-                <td class="text-weight-bold">Logon</td>
-                <td class="text-weight-bold">Count</td>
-              </tr>
-              <tr v-for="item in model.startName" :key="item[0]">
-                <td>
-                  {{ item[0] }}
-                </td>
-                <td class="text-right">
-                  {{ item[1] }}
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </div>
-      </q-card>
+      <logon-component :start-name="model.startName" :loading="isLoading" />
     </div>
     <div class="col-grow q-ma-sm">
-      <q-card flat bordered>
-        <q-card-section>
-          <div class="text-h6">Summary</div>
-          <div class="text-weight-thin">
-            {{ (model.services.total ?? 0) + (model.drivers.total ?? 0) }} total
-            services &amp; drivers
-          </div>
-        </q-card-section>
-
-        <q-markup-table dense>
-          <tbody>
-            <tr>
-              <td class="text-left"></td>
-              <td class="text-right text-weight-bold">Services</td>
-              <td class="text-right text-weight-bold">Drivers</td>
-            </tr>
-            <tr>
-              <td class="text-left text-light-green">Running</td>
-              <td class="text-right text-light-green">
-                {{ model.services.running }}
-              </td>
-              <td class="text-right text-light-green">
-                {{ model.drivers.running }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-left text-red-9">Stopped</td>
-              <td class="text-right text-red-9">
-                {{ model.services.stopped }}
-              </td>
-              <td class="text-right text-red-9">{{ model.drivers.stopped }}</td>
-            </tr>
-            <tr>
-              <td class="text-left text-indigo-6">Automatic</td>
-              <td class="text-right text-indigo-6">
-                {{ model.services.automatic }}
-              </td>
-              <td class="text-right text-indigo-6">
-                {{ model.drivers.automatic }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-left text-grey-5">Manual</td>
-              <td class="text-right text-grey-5">
-                {{ model.services.manual }}
-              </td>
-              <td class="text-right text-grey-5">{{ model.drivers.manual }}</td>
-            </tr>
-            <tr>
-              <td class="text-left text-weight-bold">Total</td>
-              <td class="text-right">{{ model.services.total }}</td>
-              <td class="text-right">{{ model.drivers.total }}</td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-      </q-card>
+      <summary-component
+        :services="model.services"
+        :drivers="model.drivers"
+        :loading="isLoading"
+      />
     </div>
     <div class="col-grow q-ma-sm">
-      <q-card flat bordered>
-        <q-card-section>
-          <div class="text-h6 text-red-6">
-            <q-icon name="notification_important" />
-            Critical
-          </div>
-          <div class="text-weight-thin text-red-3">
-            Automatic services & not running
-          </div>
-        </q-card-section>
-        <div class="critical-table">
-          <q-markup-table dense flat>
-            <tbody>
-              <tr v-for="s in model.critical" :key="s.name">
-                <td class="text-red-9">
-                  <q-icon name="sync_problem" /> {{ s.caption }}
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </div>
-      </q-card>
+      <critical-component :critical="model.critical" :loading="isLoading" />
     </div>
   </div>
 </template>
 
-<style lang="css" scoped>
-.critical-table {
-  overflow-y: auto;
-  max-height: 172px;
-}
-</style>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import _filter from 'lodash/filter';
@@ -194,16 +56,12 @@ import _groupBy from 'lodash/groupBy';
 import _sortBy from 'lodash/sortBy';
 
 import DCardComponent from './DCardComponent.vue';
+import SystemInfoComponent from './SystemInfoComponent.vue';
+import LogonComponent from './LogonComponent.vue';
+import SummaryComponent from './SummaryComponent.vue';
+import CriticalComponent from './CriticalComponent.vue';
 import * as serviceApi from '../service-api';
-import { ServiceModel, SystemModel } from '../models';
-
-type ServiceStatusModel = {
-  running?: number;
-  stopped?: number;
-  automatic?: number;
-  manual?: number;
-  total?: number;
-};
+import { ServiceModel, SystemModel, ServiceStatusModel } from '../models';
 
 type DashboardModel = {
   services: ServiceStatusModel;
@@ -217,6 +75,10 @@ export default defineComponent({
   name: 'DashboardComponent',
   components: {
     DCardComponent,
+    SystemInfoComponent,
+    LogonComponent,
+    SummaryComponent,
+    CriticalComponent,
   },
 
   setup() {
