@@ -96,6 +96,7 @@ export async function getService(
   }
   return undefined;
 }
+
 function processDependsWmi(wmi: string): Array<DependenciesModel> {
   const rtnVal: Array<DependenciesModel> = [];
   const regexAnt = /Antecedent.*\"(.*?)\"/gim; // matches Antecedent : Win32_SystemDriver (Name = "WinVerbs")
@@ -116,6 +117,7 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
   }
   return rtnVal;
 }
+
 function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
   wmi = wmi.replaceAll("\\", "|");
   const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }

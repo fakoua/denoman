@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-toolbar-title> DenoMan </q-toolbar-title>
 
-        <div>v 0.1</div>
+        <div>v {{ version }}</div>
       </q-toolbar>
     </q-header>
     <q-page-container>
@@ -15,12 +15,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { version } from '../../package.json';
 
 export default defineComponent({
   name: 'MainLayout',
 
   setup() {
-    return {};
+    return {
+      version,
+    };
   },
 });
 </script>

@@ -7,5 +7,5 @@ Windows Services Manager by Deno!
 Run the following command and see the magic!
 
 ```
-deno run -A https://deno.land/x/denoman/mod.ts
+deno run -A --reload https://deno.land/x/denoman/mod.ts
 ```
