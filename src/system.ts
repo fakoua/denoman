@@ -2,6 +2,11 @@ import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
 import { getWmiValue } from "./wmiutils.ts";
 import { SystemModel, WinRMPayload } from "./models.ts";
 
+/**
+ * Retrieves system information using WinRM.
+ * @param payload - The WinRM payload containing the necessary credentials and connection details.
+ * @returns A Promise that resolves to a SystemModel object representing the system information.
+ */
 export async function getSystem(payload: WinRMPayload): Promise<SystemModel> {
   const query_Win32_OperatingSystem =
     "Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -Property Caption, CSName, OSArchitecture, SystemDrive| Format-Custom -Depth 1";

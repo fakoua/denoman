@@ -1,7 +1,7 @@
 {
   "name": "q-manui",
-  "version": "1.0.3",
-  "description": "DenoMan 1.0.3",
+  "version": "1.0.4",
+  "description": "DenoMan 1.0.4",
   "productName": "q-manui",
   "author": "Sameh Fakoua <s.fakoua@gmail.com>",
   "private": true,
@@ -13,6 +13,7 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@quasar/cli": "^2.3.0",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "lodash": "^4.17.21",

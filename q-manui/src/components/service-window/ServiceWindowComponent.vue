@@ -45,9 +45,9 @@
 <style lang="css" scoped></style>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { PropType, defineComponent, ref } from 'vue';
 
-import { ServiceType } from '../models';
+import { ServiceModel } from '../models';
 import GeneralTabComponent from './GeneralTabComponent.vue';
 import DependenciesTabComponent from './DependenciesTabComponent.vue';
 
@@ -57,7 +57,7 @@ export default defineComponent({
 
   props: {
     service: {
-      type: ServiceType,
+      type: Object as PropType<ServiceModel>,
       required: false,
     },
   },

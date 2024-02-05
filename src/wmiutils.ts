@@ -1,3 +1,12 @@
+/**
+ * Retrieves the value from a WMI query result based on the specified property names.
+ *
+ * @template T - The type of the value to be returned.
+ * @param propName - The name of the property to match.
+ * @param nexPropName - The name of the next property to match.
+ * @param wmi - The WMI query result string.
+ * @returns The value extracted from the WMI query result.
+ */
 export function getWmiValue<T>(
   propName: string,
   nexPropName: string,

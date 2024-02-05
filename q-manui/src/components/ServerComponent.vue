@@ -22,7 +22,7 @@
                 <service-details-component
                   :service="selectedService"
                   v-on:on-open-service="
-            (svr: ServiceType) => {
+            (svr: ServiceModel) => {
               openService(svr);
             }
           "
@@ -34,12 +34,12 @@
               <div class="q-a-xl no-margin no-padding">
                 <services-list-component
                   v-on:on-select-service="
-            (svr: ServiceType) => {
+            (svr: ServiceModel) => {
               selectedService = svr;
             }
           "
                   v-on:on-open-service="
-            (svr: ServiceType) => {
+            (svr: ServiceModel) => {
               openService(svr);
             }
           "
@@ -56,7 +56,7 @@
     <header>
       <div class="fit row wrap justify-between items-start content-start">
         <div class="text-caption caption dialog-title">
-          {{ doubleClickedService.data?.caption }}
+          {{ doubleClickedService?.caption }}
         </div>
         <div class="overflow: auto;">
           <q-btn
@@ -169,9 +169,7 @@ import ServiceDetailsComponent from '../components/ServiceDetailsComponent.vue';
 import ServiceWindowComponent from '../components/service-window/ServiceWindowComponent.vue';
 import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
 
-import { ServiceModel, ServiceType } from './models';
-
-//import { ServiceModel, ServiceType } from './repo/models';
+import { ServiceModel } from './models';
 
 export default defineComponent({
   name: 'ServerComponent',
@@ -182,7 +180,7 @@ export default defineComponent({
     DashboardComponent,
   },
   methods: {
-    openService(service: ServiceType) {
+    openService(service: ServiceModel) {
       this.doubleClickedService = service;
       this.isDialogOpen = true;
       (this.$refs.serviceWindow as HTMLDialogElement).showModal();
@@ -190,8 +188,8 @@ export default defineComponent({
   },
 
   setup() {
-    const doubleClickedService = ref<ServiceType>(new ServiceType());
-    const selectedService = ref<ServiceType>(new ServiceType());
+    const doubleClickedService = ref<ServiceModel | undefined>(undefined);
+    const selectedService = ref<ServiceModel | undefined>(undefined);
     const isDialogOpen = ref(false);
     const serviceWindow = ref<HTMLDialogElement | null>(null);
 
@@ -205,9 +203,9 @@ export default defineComponent({
         }
       });
       bus.on('serviceChanged', (service) => {
-        selectedService.value = new ServiceType(service as ServiceModel);
+        selectedService.value = service;
         if (isDialogOpen.value) {
-          doubleClickedService.value = new ServiceType(service as ServiceModel);
+          doubleClickedService.value = service;
           serviceWindow.value?.showModal();
         }
       });

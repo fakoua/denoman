@@ -40,7 +40,7 @@ export async function getDependencies(): Promise<
 
 export async function controlService(
   action: ControlAction,
-  name: string,
+  name: string
 ): Promise<ServiceModel | undefined> {
   const params = getPayload();
   try {
@@ -50,7 +50,7 @@ export async function controlService(
         action: action,
         serviceName: name,
       },
-      { params },
+      { params }
     );
     if (res.status === 200) {
       return res.data;

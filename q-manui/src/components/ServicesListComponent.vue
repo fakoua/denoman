@@ -180,11 +180,11 @@
 import { defineComponent, onMounted, ref } from 'vue';
 
 import * as serviceApi from './service-api';
-import { ControlAction, ServiceModel, ServiceType } from './models';
+import { ControlAction, ServiceModel } from './models';
 import { bus } from 'boot/bus';
-import { useQuasar } from 'quasar';
+import { QTableColumn, useQuasar } from 'quasar';
 
-const columns = [
+const columns: QTableColumn[] = [
   {
     name: 'caption',
     label: 'Name',
@@ -242,12 +242,12 @@ export default defineComponent({
   name: 'ServicesListComponent',
 
   methods: {
-    onSelect(row: any) {
+    onSelect(row: ServiceModel) {
       this.selected = [row];
       const service = this.selected[0] as ServiceModel;
 
       this.setDisabledControls(service);
-      this.$emit('onSelectService', new ServiceType(row as ServiceModel));
+      this.$emit('onSelectService', row as ServiceModel);
     },
     rowStyle(service: ServiceModel): string {
       if (service.isSystemDriver) {
@@ -255,8 +255,8 @@ export default defineComponent({
       }
       return service.state == 'Stopped' ? 'text-red-6' : 'bg-white text-black';
     },
-    onDoubleClick(row: any) {
-      this.$emit('onOpenService', new ServiceType(row as ServiceModel));
+    onDoubleClick(row: ServiceModel) {
+      this.$emit('onOpenService', row as ServiceModel);
     },
     controlService(action: ControlAction) {
       if (this.selected && this.selected.length > 0) {
@@ -279,12 +279,12 @@ export default defineComponent({
   emits: ['onSelectService', 'onOpenService'],
 
   setup() {
-    const services = ref<Array<ServiceModel>>([]); //All services
-    const data = ref<Array<ServiceModel>>([]); //Services filtered by isSystemData
+    const services = ref<ServiceModel[]>([]); //All services
+    const data = ref<ServiceModel[]>([]); //Services filtered by isSystemData
     const isLoading = ref(true);
     const showSystemDriver = ref(false);
     const disabledControls = ref<boolean[]>([true, true, true, true, true]);
-    const selected = ref([] as any[]);
+    const selected = ref([] as ServiceModel[]);
     const $q = useQuasar();
 
     const loadServices = async () => {
@@ -310,6 +310,8 @@ export default defineComponent({
     onMounted(async () => {
       await loadServices();
       isLoading.value = false;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       bus.on('controlService', async (action: any) => {
         $q.loading.show();
         const res = await serviceApi.controlService(action.action, action.name);

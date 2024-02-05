@@ -86,23 +86,18 @@ div.div-form {
 </style>
 <script lang="ts">
 import { uid } from 'quasar';
-import { defineComponent, onMounted, ref } from 'vue';
+import { PropType, defineComponent, onMounted, ref } from 'vue';
 
 import * as serviceApi from '../service-api';
 
-import {
-  DependenciesModel,
-  ServiceModel,
-  ServiceType,
-  TreeNodeDeps,
-} from '../models';
+import { DependenciesModel, ServiceModel, TreeNodeDeps } from '../models';
 
 export default defineComponent({
   name: 'DependenciesTabComponent',
 
   props: {
     service: {
-      type: ServiceType,
+      type: Object as PropType<ServiceModel>,
       required: false,
     },
   },
@@ -173,20 +168,24 @@ export default defineComponent({
 
     onMounted(async () => {
       dependentsNode.value = await getNodeChildren(
-        `${props.service?.data?.name}@root`
+        `${props.service?.name}@root`
       );
       antecedentsNode.value = await getNodeChildrenAntecedent(
-        `${props.service?.data?.name}@root`
+        `${props.service?.name}@root`
       );
       isLoading.value = false;
     });
 
-    const onLazyLoad = async ({ node, key, done, fail }) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const onLazyLoad = async ({ key, done }) => {
       const children = await getNodeChildren(key);
       done(children);
     };
 
-    const onLazyLoadAntecedent = async ({ node, key, done, fail }) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const onLazyLoadAntecedent = async ({ key, done }) => {
       const children = await getNodeChildrenAntecedent(key);
       done(children);
     };

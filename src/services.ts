@@ -3,6 +3,11 @@ import { delay } from "https://deno.land/std@0.213.0/async/delay.ts";
 import { DependenciesModel, ServiceModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
+/**
+ * Retrieves the list of services from a remote machine using WinRM.
+ * @param payload The WinRM payload containing the necessary credentials and connection details.
+ * @returns A promise that resolves to an array of ServiceModel objects representing the services.
+ */
 export async function getServices(
   payload: WinRMPayload,
 ): Promise<Array<ServiceModel>> {
@@ -30,6 +35,11 @@ export async function getServices(
   return regularServices.concat(systemDriverServices);
 }
 
+/**
+ * Retrieves the dependent services of a given WinRMPayload.
+ * @param payload The WinRMPayload containing the necessary information for the query.
+ * @returns A Promise that resolves to an array of DependenciesModel representing the dependent services.
+ */
 export async function getDependsServices(
   payload: WinRMPayload,
 ): Promise<Array<DependenciesModel>> {
@@ -48,6 +58,13 @@ export async function getDependsServices(
   return processDependsWmi(res.stdout);
 }
 
+/**
+ * Executes an action on a service.
+ * @param serviceName - The name of the service.
+ * @param action - The action to perform on the service. Can be "Start", "Stop", "Suspend", "Resume", or "Restart".
+ * @param payload - The payload containing the necessary information for the action.
+ * @returns A Promise that resolves to the updated ServiceModel if the action is successful, otherwise undefined.
+ */
 export async function actions(
   serviceName: string,
   action: "Start" | "Stop" | "Suspend" | "Resume" | "Restart",
@@ -73,6 +90,12 @@ export async function actions(
   return undefined;
 }
 
+/**
+ * Retrieves information about a service.
+ * @param name - The name of the service.
+ * @param payload - The payload containing the WinRM credentials and connection details.
+ * @returns A Promise that resolves to a ServiceModel object representing the service, or undefined if the service is not found.
+ */
 export async function getService(
   name: string,
   payload: WinRMPayload,
@@ -97,6 +120,11 @@ export async function getService(
   return undefined;
 }
 
+/**
+ * Processes the WMI string and extracts the dependencies using regular expressions.
+ * @param wmi The WMI string to process.
+ * @returns An array of DependenciesModel objects containing the antecedent and dependent values.
+ */
 function processDependsWmi(wmi: string): Array<DependenciesModel> {
   const rtnVal: Array<DependenciesModel> = [];
   const regexAnt = /Antecedent.*\"(.*?)\"/gim; // matches Antecedent : Win32_SystemDriver (Name = "WinVerbs")
@@ -118,6 +146,13 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
   return rtnVal;
 }
 
+/**
+ * Processes the WMI data and returns an array of ServiceModel objects.
+ *
+ * @param wmi - The WMI data to process.
+ * @param isSystemDriver - Indicates whether the service is a system driver.
+ * @returns An array of ServiceModel objects.
+ */
 function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
   wmi = wmi.replaceAll("\\", "|");
   const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }

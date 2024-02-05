@@ -2,19 +2,19 @@
   <div class="div-form">
     <div class="text-caption text-primary">Service name:</div>
     <div class="q-mb-sm value">
-      {{ service?.data?.name }}
+      {{ service?.name }}
     </div>
     <div class="text-caption text-primary">Display name:</div>
     <div class="q-mb-sm value">
-      {{ service?.data?.caption }}
+      {{ service?.caption }}
     </div>
     <div class="text-caption text-primary">Description:</div>
     <div class="q-mb-sm value description">
-      {{ service?.data?.description }}
+      {{ service?.description }}
     </div>
     <div class="text-caption text-primary">Path to executable:</div>
     <div class="q-mb-sm value path">
-      {{ service?.data?.pathName }}
+      {{ service?.pathName }}
     </div>
     <q-separator class="q-mt-md q-mb-md" />
     <div class="inline">
@@ -22,18 +22,18 @@
       <div class="q-mb-sm value">
         <q-chip
           class="status"
-          :color="getStateStyle(service?.data?.state).color"
+          :color="getStateStyle(service?.state).color"
           text-color="white"
-          :icon="getStateStyle(service?.data?.state).icon"
+          :icon="getStateStyle(service?.state).icon"
         >
-          {{ service?.data?.state }}
+          {{ service?.state }}
         </q-chip>
       </div>
     </div>
     <div class="inline">
       <div class="text-caption text-primary">Log on as:</div>
       <div class="q-mb-sm value">
-        {{ service?.data?.startName }}
+        {{ service?.startName }}
       </div>
     </div>
     <div class="footer q-gutter-sm">
@@ -44,7 +44,7 @@
         label="Start"
         size="10px"
         color="primary"
-        :disable="service?.data?.state !== 'Stopped'"
+        :disable="service?.state !== 'Stopped'"
       />
       <q-btn
         outline
@@ -52,7 +52,7 @@
         label="Stop"
         size="10px"
         color="deep-orange"
-        :disable="!service?.data?.acceptStop"
+        :disable="!service?.acceptStop"
       />
       <q-btn
         @click="controlService('Suspend')"
@@ -60,9 +60,7 @@
         label="Pause"
         size="10px"
         color="primary"
-        :disable="
-          !(service?.data?.state === 'Running' && service?.data?.acceptPause)
-        "
+        :disable="!(service?.state === 'Running' && service?.acceptPause)"
       />
       <q-btn
         @click="controlService('Resume')"
@@ -70,7 +68,7 @@
         label="Resume"
         size="10px"
         color="primary"
-        :disable="service?.data?.state !== 'Paused'"
+        :disable="service?.state !== 'Paused'"
       />
       <q-btn
         @click="controlService('Restart')"
@@ -78,7 +76,7 @@
         label="Restart"
         size="10px"
         color="primary"
-        :disable="service?.data?.state !== 'Running'"
+        :disable="service?.state !== 'Running'"
       />
     </div>
   </div>
@@ -114,17 +112,17 @@ div.footer {
 }
 </style>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { PropType, defineComponent } from 'vue';
 import { bus } from 'boot/bus';
 
-import { ControlAction, ServiceType } from '../models';
+import { ControlAction, ServiceModel } from '../models';
 
 export default defineComponent({
   name: 'GeneralTabComponent',
 
   props: {
     service: {
-      type: ServiceType,
+      type: Object as PropType<ServiceModel>,
       required: false,
     },
   },
@@ -133,7 +131,7 @@ export default defineComponent({
     async controlService(action: ControlAction) {
       bus.emit('controlService', {
         action: action,
-        name: this.service?.data?.name,
+        name: this.service?.name,
       });
     },
     getStateStyle(state: string | undefined) {

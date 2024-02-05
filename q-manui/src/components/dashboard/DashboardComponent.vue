@@ -47,21 +47,33 @@
       <critical-component :critical="model.critical" :loading="isLoading" />
     </div>
   </div>
+  <div class="full-width row justify-between">
+    <div class="col-grow q-ma-sm">
+      <top-dependency-component :loading="isLoading" :deps="model.topDeps" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import _filter from 'lodash/filter';
 import _groupBy from 'lodash/groupBy';
 import _sortBy from 'lodash/sortBy';
+import _take from 'lodash/take';
 
 import DCardComponent from './DCardComponent.vue';
 import SystemInfoComponent from './SystemInfoComponent.vue';
 import LogonComponent from './LogonComponent.vue';
 import SummaryComponent from './SummaryComponent.vue';
 import CriticalComponent from './CriticalComponent.vue';
+import TopDependencyComponent from './TopDependencyComponent.vue';
 import * as serviceApi from '../service-api';
-import { ServiceModel, SystemModel, ServiceStatusModel } from '../models';
+import {
+  ServiceModel,
+  SystemModel,
+  ServiceStatusModel,
+  DependenciesModel,
+} from '../models';
 
 type DashboardModel = {
   services: ServiceStatusModel;
@@ -69,6 +81,7 @@ type DashboardModel = {
   critical: ServiceModel[] | undefined;
   system?: SystemModel;
   startName: [login: string, count: number][];
+  topDeps: [service: string, count: number][];
 };
 
 export default defineComponent({
@@ -79,6 +92,7 @@ export default defineComponent({
     LogonComponent,
     SummaryComponent,
     CriticalComponent,
+    TopDependencyComponent,
   },
 
   setup() {
@@ -87,8 +101,98 @@ export default defineComponent({
       drivers: {},
       critical: [],
       startName: [],
+      topDeps: [],
     });
     const isLoading = ref(true);
+
+    const processServices = (services: ServiceModel[]) => {
+      model.value.services.running = _filter(services, {
+        isSystemDriver: false,
+        state: 'Running',
+      }).length;
+
+      model.value.services.stopped = _filter(services, {
+        isSystemDriver: false,
+        state: 'Stopped',
+      }).length;
+
+      model.value.services.automatic = _filter(services, {
+        isSystemDriver: false,
+        startMode: 'Auto',
+      }).length;
+
+      model.value.services.manual = _filter(services, {
+        isSystemDriver: false,
+        startMode: 'Manual',
+      }).length;
+
+      model.value.services.total = _filter(services, {
+        isSystemDriver: false,
+      }).length;
+
+      model.value.drivers.running = _filter(services, {
+        isSystemDriver: true,
+        state: 'Running',
+      }).length;
+
+      model.value.drivers.stopped = _filter(services, {
+        isSystemDriver: true,
+        state: 'Stopped',
+      }).length;
+
+      model.value.drivers.automatic = _filter(services, {
+        isSystemDriver: true,
+        startMode: 'Auto',
+      }).length;
+
+      model.value.drivers.manual = _filter(services, {
+        isSystemDriver: true,
+        startMode: 'Manual',
+      }).length;
+
+      model.value.drivers.total = _filter(services, {
+        isSystemDriver: true,
+      }).length;
+
+      model.value.critical = services?.filter((v) => {
+        return v.state !== 'Running' && v.startMode === 'Auto';
+      });
+
+      const startNameGroup = _groupBy(services, (s) => {
+        return s.startName.toLocaleLowerCase();
+      });
+
+      for (let key in startNameGroup) {
+        let startName = key.replaceAll('|', '\\');
+        if (startName === '') {
+          startName = '[No Login]';
+        }
+        model.value.startName.push([startName, startNameGroup[key].length]);
+      }
+      model.value.startName = _sortBy(model.value.startName, [1]).reverse();
+    };
+
+    const processDependencies = (
+      services: ServiceModel[],
+      dependencies: DependenciesModel[]
+    ) => {
+      const grp = _groupBy(dependencies, (s) => {
+        return s.antecedent;
+      });
+      let lst: [service: string, count: number][] = [];
+
+      for (let key in grp) {
+        lst.push([key, grp[key].length]);
+      }
+
+      lst = _take(_sortBy(lst, [1]).reverse(), 5);
+
+      lst.forEach((dep) => {
+        dep[0] = services.find((s) => s.name === dep[0])?.displayName || dep[0];
+      });
+      model.value.topDeps = lst;
+    };
+
     const loadServices = async (): Promise<ServiceModel[] | undefined> => {
       const res = await serviceApi.getServices();
       return res;
@@ -99,79 +203,28 @@ export default defineComponent({
       return res;
     };
 
-    loadServices()
-      .then((res) => {
-        model.value.services.running = _filter(res, {
-          isSystemDriver: false,
-          state: 'Running',
-        }).length;
+    const loadDependencies = async (): Promise<
+      DependenciesModel[] | undefined
+    > => {
+      const res = await serviceApi.getDependencies();
+      return res;
+    };
 
-        model.value.services.stopped = _filter(res, {
-          isSystemDriver: false,
-          state: 'Stopped',
-        }).length;
+    onMounted(async () => {
+      const services = await loadServices();
+      if (services) {
+        processServices(services);
+      }
 
-        model.value.services.automatic = _filter(res, {
-          isSystemDriver: false,
-          startMode: 'Auto',
-        }).length;
+      model.value.system = await loadSystem();
 
-        model.value.services.manual = _filter(res, {
-          isSystemDriver: false,
-          startMode: 'Manual',
-        }).length;
+      const deps = await loadDependencies();
 
-        model.value.services.total = _filter(res, {
-          isSystemDriver: false,
-        }).length;
+      if (deps && services) {
+        processDependencies(services, deps);
+      }
 
-        model.value.drivers.running = _filter(res, {
-          isSystemDriver: true,
-          state: 'Running',
-        }).length;
-
-        model.value.drivers.stopped = _filter(res, {
-          isSystemDriver: true,
-          state: 'Stopped',
-        }).length;
-
-        model.value.drivers.automatic = _filter(res, {
-          isSystemDriver: true,
-          startMode: 'Auto',
-        }).length;
-
-        model.value.drivers.manual = _filter(res, {
-          isSystemDriver: true,
-          startMode: 'Manual',
-        }).length;
-
-        model.value.drivers.total = _filter(res, {
-          isSystemDriver: true,
-        }).length;
-
-        model.value.critical = res?.filter((v) => {
-          return v.state !== 'Running' && v.startMode === 'Auto';
-        });
-
-        const startNameGroup = _groupBy(res, (s) => {
-          return s.startName.toLocaleLowerCase();
-        });
-
-        for (let key in startNameGroup) {
-          let startName = key.replaceAll('|', '\\');
-          if (startName === '') {
-            startName = '[No Login]';
-          }
-          model.value.startName.push([startName, startNameGroup[key].length]);
-        }
-        model.value.startName = _sortBy(model.value.startName, [1]).reverse();
-      })
-      .finally(() => {
-        isLoading.value = false;
-      });
-
-    loadSystem().then((res) => {
-      model.value.system = res;
+      isLoading.value = false;
     });
 
     return {

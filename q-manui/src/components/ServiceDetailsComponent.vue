@@ -1,12 +1,12 @@
 <template>
   <div class="container column justify-between">
     <div>
-      <div v-if="!service.data" class="text-weight-bold text-primary mb-12">
+      <div v-if="!service" class="text-weight-bold text-primary mb-12">
         Select a service
       </div>
-      <div v-if="service.data">
+      <div v-if="service">
         <div class="text-weight-bold text-primary mb-12">
-          {{ service.data?.caption }}
+          {{ service.caption }}
         </div>
         <div>
           <q-btn outline size="sm" color="primary" label="Actions">
@@ -19,7 +19,7 @@
                 <q-item
                   clickable
                   @click="controlService('Start')"
-                  :disable="service?.data?.state !== 'Stopped'"
+                  :disable="service?.state !== 'Stopped'"
                 >
                   <q-item-section avatar class="q-item-section-item">
                     <q-icon name="play_arrow" size="20px" />
@@ -29,7 +29,7 @@
                 <q-item
                   clickable
                   @click="controlService('Stop')"
-                  :disable="!service?.data?.acceptStop"
+                  :disable="!service?.acceptStop"
                 >
                   <q-item-section avatar class="q-item-section-item">
                     <q-icon name="stop" size="20px" />
@@ -40,10 +40,7 @@
                   clickable
                   @click="controlService('Suspend')"
                   :disable="
-                    !(
-                      service?.data?.state === 'Running' &&
-                      service?.data?.acceptPause
-                    )
+                    !(service?.state === 'Running' && service?.acceptPause)
                   "
                 >
                   <q-item-section avatar class="q-item-section-item">
@@ -54,7 +51,7 @@
                 <q-item
                   clickable
                   @click="controlService('Resume')"
-                  :disable="service?.data?.state !== 'Paused'"
+                  :disable="service?.state !== 'Paused'"
                 >
                   <q-item-section avatar class="q-item-section-item">
                     <q-icon name="motion_photos_paused" size="20px" />
@@ -64,7 +61,7 @@
                 <q-item
                   clickable
                   @click="controlService('Restart')"
-                  :disable="service?.data?.state !== 'Running'"
+                  :disable="service?.state !== 'Running'"
                 >
                   <q-item-section avatar class="q-item-section-item">
                     <q-icon name="replay" size="20px" />
@@ -85,11 +82,11 @@
 
         <div class="text-weight-bold mt-12">Path to executable:</div>
         <div class="mb-12 div-path-name">
-          {{ service.data?.pathName.replaceAll('|', '\\') }}
+          {{ service.pathName.replaceAll('|', '\\') }}
         </div>
         <div class="text-weight-bold">Description:</div>
         <div>
-          {{ service.data?.description }}
+          {{ service.description }}
         </div>
       </div>
     </div>
@@ -144,21 +141,21 @@
   overflow-wrap: anywhere;
 }
 </style>
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { api } from 'boot/axios';
 
-import { ControlAction, ServiceType } from './models';
+<script lang="ts">
+import { PropType, defineComponent, ref } from 'vue';
+import { getSystemInformation } from './service-api';
+
+import { ControlAction, ServiceModel, SystemModel } from './models';
 import { bus } from 'boot/bus';
-import { useHostsStore } from 'src/stores/hosts-store';
 
 export default defineComponent({
   name: 'ServiceDetailsComponent',
 
   props: {
     service: {
-      type: ServiceType,
-      required: true,
+      type: Object as PropType<ServiceModel>,
+      required: false,
     },
   },
 
@@ -169,7 +166,7 @@ export default defineComponent({
     async controlService(action: ControlAction) {
       bus.emit('controlService', {
         action: action,
-        name: this.service?.data?.name,
+        name: this.service?.name,
       });
     },
   },
@@ -177,16 +174,12 @@ export default defineComponent({
   emits: ['onOpenService'],
 
   setup() {
-    const store = useHostsStore();
+    const data = ref<SystemModel>({} as SystemModel);
 
-    const params = store.$state[0];
-
-    const data = ref([]);
     const isLoading = ref(true);
-    api
-      .get('http://localhost:8001/api/system', { params })
+    getSystemInformation()
       .then((response) => {
-        data.value = response.data;
+        data.value = response;
       })
       .catch(() => {
         console.log('error');
@@ -194,6 +187,7 @@ export default defineComponent({
       .finally(() => {
         isLoading.value = false;
       });
+
     return {
       data,
       isLoading,

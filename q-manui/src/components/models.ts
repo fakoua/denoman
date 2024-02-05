@@ -30,20 +30,12 @@ export interface ServiceModel {
 }
 
 export type SystemModel = {
-  caption: string,
-  csName: string,
-  memory: string,
-  osArchitecture: string,
-  processorName: string,
-}
-
-export class ServiceType {
-  constructor(readonly data?: ServiceModel) {
-    if (data) {
-      this.data = data;
-    }
-  }
-}
+  caption: string;
+  csName: string;
+  memory: string;
+  osArchitecture: string;
+  processorName: string;
+};
 
 export type DependenciesModel = {
   antecedent: string;
