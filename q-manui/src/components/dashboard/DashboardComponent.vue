@@ -51,6 +51,16 @@
     <div class="col-grow q-ma-sm">
       <top-dependency-component :loading="isLoading" :deps="model.topDeps" />
     </div>
+    <div class="col-grow q-ma-sm">
+      <service-type-component :loading="isLoading" :types="model.types" />
+    </div>
+
+    <div class="col-grow q-ma-sm">
+      <service-type-component :loading="isLoading" :types="model.types" />
+    </div>
+    <div class="col-grow q-ma-sm">
+      <service-type-component :loading="isLoading" :types="model.types" />
+    </div>
   </div>
 </template>
 
@@ -67,6 +77,8 @@ import LogonComponent from './LogonComponent.vue';
 import SummaryComponent from './SummaryComponent.vue';
 import CriticalComponent from './CriticalComponent.vue';
 import TopDependencyComponent from './TopDependencyComponent.vue';
+import ServiceTypeComponent from './ServiceTypeComponent.vue';
+
 import * as serviceApi from '../service-api';
 import {
   ServiceModel,
@@ -82,6 +94,7 @@ type DashboardModel = {
   system?: SystemModel;
   startName: [login: string, count: number][];
   topDeps: [service: string, count: number][];
+  types?: [type: string, count: number][];
 };
 
 export default defineComponent({
@@ -93,6 +106,7 @@ export default defineComponent({
     SummaryComponent,
     CriticalComponent,
     TopDependencyComponent,
+    ServiceTypeComponent,
   },
 
   setup() {
@@ -170,6 +184,15 @@ export default defineComponent({
         model.value.startName.push([startName, startNameGroup[key].length]);
       }
       model.value.startName = _sortBy(model.value.startName, [1]).reverse();
+
+      const serviceType = _groupBy(services, (s) => {
+        return s.serviceType;
+      });
+      model.value.types = [];
+      for (let key in serviceType) {
+        model.value.types.push([key, serviceType[key].length]);
+      }
+      model.value.types = _sortBy(model.value.types, [1]).reverse();
     };
 
     const processDependencies = (

@@ -27,7 +27,7 @@
         <tbody>
           <tr>
             <td class="text-weight-bold">Service</td>
-            <td class="text-weight-bold">Required By</td>
+            <td class="text-weight-bold text-right">Required By</td>
           </tr>
           <tr v-for="item in deps" :key="item[0]">
             <td>

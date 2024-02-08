@@ -177,10 +177,10 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { PropType, defineComponent, onMounted, ref } from 'vue';
 
 import * as serviceApi from './service-api';
-import { ControlAction, ServiceModel } from './models';
+import { ControlAction, ServiceModel, WinRMPayload } from './models';
 import { bus } from 'boot/bus';
 import { QTableColumn, useQuasar } from 'quasar';
 
@@ -241,6 +241,12 @@ const columns: QTableColumn[] = [
 export default defineComponent({
   name: 'ServicesListComponent',
 
+  props: {
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
+    },
+  },
   methods: {
     onSelect(row: ServiceModel) {
       this.selected = [row];
@@ -278,7 +284,7 @@ export default defineComponent({
 
   emits: ['onSelectService', 'onOpenService'],
 
-  setup() {
+  setup(props) {
     const services = ref<ServiceModel[]>([]); //All services
     const data = ref<ServiceModel[]>([]); //Services filtered by isSystemData
     const isLoading = ref(true);
@@ -288,7 +294,7 @@ export default defineComponent({
     const $q = useQuasar();
 
     const loadServices = async () => {
-      const res = await serviceApi.getServices();
+      const res = await serviceApi.getServices(props.host);
       if (res) {
         services.value = res;
         data.value = services.value.filter((v) => {
@@ -314,7 +320,11 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       bus.on('controlService', async (action: any) => {
         $q.loading.show();
-        const res = await serviceApi.controlService(action.action, action.name);
+        const res = await serviceApi.controlService(
+          props.host,
+          action.action,
+          action.name
+        );
         await loadServices();
         bus.emit('serviceChanged', res);
         if (res) {

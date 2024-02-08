@@ -2,6 +2,9 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
+        <q-avatar>
+          <img src="/icons/denoman.svg" />
+        </q-avatar>
         <q-toolbar-title> DenoMan </q-toolbar-title>
 
         <div>v {{ version }}</div>

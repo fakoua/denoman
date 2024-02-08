@@ -1,8 +1,8 @@
 {
   "name": "q-manui",
-  "version": "1.0.4",
-  "description": "DenoMan 1.0.4",
-  "productName": "q-manui",
+  "version": "1.0.5",
+  "description": "DenoMan 1.0.5",
+  "productName": "DenoMan",
   "author": "Sameh Fakoua <s.fakoua@gmail.com>",
   "private": true,
   "scripts": {

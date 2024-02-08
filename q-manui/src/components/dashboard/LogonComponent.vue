@@ -27,7 +27,7 @@
         <tbody>
           <tr>
             <td class="text-weight-bold">Logon</td>
-            <td class="text-weight-bold">Count</td>
+            <td class="text-weight-bold text-right">Count</td>
           </tr>
           <tr v-for="item in startName" :key="item[0]">
             <td>

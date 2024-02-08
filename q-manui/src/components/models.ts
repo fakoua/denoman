@@ -55,7 +55,7 @@ export type ControlAction = 'Start' | 'Stop' | 'Suspend' | 'Resume' | 'Restart';
 export type WinRMPayload = {
   username: string;
   password: string;
-  host: string;
+  hostname: string;
   port: number;
   protocol: string;
 };

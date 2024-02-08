@@ -33,6 +33,7 @@
             <template v-slot:after>
               <div class="q-a-xl no-margin no-padding">
                 <services-list-component
+                  :host="host"
                   v-on:on-select-service="
             (svr: ServiceModel) => {
               selectedService = svr;
@@ -96,9 +97,6 @@ div.s-right {
   overflow: hidden;
   max-width: 355px;
 }
-.full-width-vw {
-  /*width: 100vw !important;*/
-}
 .left {
   border-right: 1px solid rgb(230, 229, 229);
 }
@@ -127,16 +125,6 @@ dialog {
   transition: all 0.7s allow-discrete; */
 }
 
-/*   Before-open state  */
-/* Needs to be after the previous dialog[open] rule to take effect,
-    as the specificity is the same */
-@starting-style {
-  dialog[open] {
-    opacity: 0;
-    transform: scaleY(0);
-  }
-}
-
 /* Transition the :backdrop when the dialog modal is promoted to the top layer */
 dialog::backdrop {
   background-color: rgb(0 0 0 / 0%);
@@ -149,19 +137,10 @@ dialog::backdrop {
 dialog[open]::backdrop {
   background-color: rgb(0 0 0 / 25%);
 }
-
-/* This starting-style rule cannot be nested inside the above selector
-because the nesting selector cannot represent pseudo-elements. */
-
-@starting-style {
-  dialog[open]::backdrop {
-    background-color: rgb(0 0 0 / 0%);
-  }
-}
 </style>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { PropType, defineComponent, onMounted, ref } from 'vue';
 import { bus } from 'boot/bus';
 
 import ServicesListComponent from '../components/ServicesListComponent.vue';
@@ -169,7 +148,7 @@ import ServiceDetailsComponent from '../components/ServiceDetailsComponent.vue';
 import ServiceWindowComponent from '../components/service-window/ServiceWindowComponent.vue';
 import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
 
-import { ServiceModel } from './models';
+import { ServiceModel, WinRMPayload } from './models';
 
 export default defineComponent({
   name: 'ServerComponent',
@@ -178,6 +157,12 @@ export default defineComponent({
     ServiceDetailsComponent,
     ServiceWindowComponent,
     DashboardComponent,
+  },
+  props: {
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
+    },
   },
   methods: {
     openService(service: ServiceModel) {

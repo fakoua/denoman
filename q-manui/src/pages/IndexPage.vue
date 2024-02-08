@@ -1,9 +1,9 @@
 <template>
   <q-page class="row">
-    <div class="q-gutter-y-md" v-if="isLoggedIn">
-      <q-card v-if="isLoggedIn" flat>
+    <div class="q-gutter-y-md" v-if="hostStore.hosts.length > 0">
+      <q-card flat>
         <q-tabs
-          v-model="tab"
+          v-model="selectedTab"
           dense
           class="text-grey"
           active-color="primary"
@@ -11,91 +11,132 @@
           align="left"
           narrow-indicator
         >
-          <q-tab name="tab1" :label="hostname" />
+          <q-tab
+            v-for="host in hostStore.hosts"
+            v-bind:key="host.hostname"
+            :label="
+              host.hostname + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            "
+            :name="host.hostname"
+          >
+            <q-btn
+              style="position: absolute; right: 0"
+              flat
+              size="10px"
+              padding="xs"
+              @click="
+                () => {
+                  closeTab(host.hostname);
+                }
+              "
+            >
+              <q-icon name="close" />
+            </q-btn>
+          </q-tab>
+          <q-btn flat size="10px" padding="xs" @click="showAddDialog = true">
+            <q-icon name="add" />
+          </q-btn>
         </q-tabs>
 
         <q-tab-panels
-          v-model="tab"
+          v-model="selectedTab"
           keep-alive
           animated
           class="no-margin no-padding"
         >
-          <q-tab-panel name="tab1" class="no-margin no-padding">
-            <ServerComponent />
+          <q-tab-panel
+            v-for="host in hostStore.hosts"
+            v-bind:key="host.hostname"
+            :name="host.hostname"
+            class="no-margin no-padding"
+          >
+            <ServerComponent :host="host" />
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
     </div>
-    <div
-      v-if="!isLoggedIn"
-      class="fit row wrap justify-center items-center content-center q-pa-xl"
+    <q-dialog
+      v-model="showAddDialog"
+      persistent
+      transition-show="scale"
+      transition-hide="scale"
     >
-      <q-form autocomplete="off" @submit="onSubmit">
-        <q-card v-if="!isLoggedIn" style="width: 400px">
+      <q-card class="bg-indigo text-white q-pa-none" style="width: 432px">
+        <q-form autocomplete="off" @submit="addServer">
           <q-card-section>
-            <q-input
-              v-model="hostname"
-              label="Hostname"
-              dense
-              autocomplete="nofill"
-              lazy-rules
-              :rules="[(val) => !!val || 'Field is required']"
-            />
-            <q-input
-              v-model="username"
-              label="Username"
-              dense
-              autocomplete="nofill"
-              lazy-rules
-              :rules="[(val) => !!val || 'Field is required']"
-            />
-            <q-input
-              v-model="password"
-              type="password"
-              label="Password"
-              dense
-              autocomplete="nofill"
-              lazy-rules
-              :rules="[(val) => !!val || 'Field is required']"
-            />
-            <div>
-              <div>Server:</div>
-              <div
-                class="server-pattern fit row wrap justify-start items-start content-start"
-              >
+            <div class="text-h6">Add server</div>
+          </q-card-section>
+
+          <q-card-section class="bg-white text-black q-pt-none q-ma-none">
+            <q-card style="width: 400px" flat>
+              <q-card-section>
                 <q-input
-                  v-model="protocol"
+                  v-model="hostname"
+                  label="Hostname"
                   dense
-                  maxlength="5"
                   autocomplete="nofill"
                   lazy-rules
-                  :rules="[(val) => !!val || '*']"
-                  style="width: 40px"
+                  autofocus
+                  :rules="[(val) => !!val || 'Field is required']"
                 />
-                <div class="server-static">://</div>
-                <div class="server-static">{{ hostname }}:</div>
+                <q-input
+                  v-model="username"
+                  label="Username"
+                  dense
+                  autocomplete="nofill"
+                  lazy-rules
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
+                <q-input
+                  v-model="password"
+                  type="password"
+                  label="Password"
+                  dense
+                  autocomplete="nofill"
+                  lazy-rules
+                  :rules="[(val) => !!val || 'Field is required']"
+                />
                 <div>
-                  <q-input
-                    v-model="port"
-                    dense
-                    type="number"
-                    autocomplete="nofill"
-                    lazy-rules
-                    :rules="[(val) => !!val || '*']"
-                    style="width: 50px"
-                  />
+                  <div>Server:</div>
+                  <div
+                    class="server-pattern fit row wrap justify-start items-start content-start"
+                  >
+                    <q-input
+                      v-model="protocol"
+                      dense
+                      maxlength="5"
+                      autocomplete="nofill"
+                      lazy-rules
+                      :rules="[(val) => !!val || '*']"
+                      style="width: 40px"
+                    />
+                    <div class="server-static">://</div>
+                    <div class="server-static">{{ hostname }}:</div>
+                    <div>
+                      <q-input
+                        v-model="port"
+                        dense
+                        type="number"
+                        autocomplete="nofill"
+                        lazy-rules
+                        :rules="[(val) => !!val || '*']"
+                        style="width: 50px"
+                      />
+                    </div>
+                    <div class="server-static">/wsman</div>
+                  </div>
                 </div>
-                <div class="server-static">/wsman</div>
-              </div>
-            </div>
+              </q-card-section>
+            </q-card>
           </q-card-section>
           <q-separator />
-          <q-card-actions align="right">
-            <q-btn flat type="submit">Connect</q-btn>
+          <q-card-actions align="right" class="bg-white text-indigo">
+            <q-btn type="submit" flat label="OK" />
+            <q-btn flat label="Cancel" v-close-popup />
           </q-card-actions>
-        </q-card>
-      </q-form>
-    </div>
+        </q-form>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -107,9 +148,6 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type='number'] {
-  -moz-appearance: textfield; /* Firefox */
-}
 .server-pattern .server-static {
   line-height: 40px;
   font-weight: 600;
@@ -131,39 +169,63 @@ export default defineComponent({
   components: { ServerComponent },
 
   setup() {
-    const isLoggedIn = ref(false);
+    const selectedTab = ref('');
+    const showAddDialog = ref(false);
     const hostname = ref('');
     const username = ref('');
     const password = ref('');
     const protocol = ref('http');
     const port = ref(5985);
 
-    const hosts = useHostsStore();
-    if (hosts.$state.length > 0) {
-      hostname.value = hosts.$state[0].host;
+    const hostStore = useHostsStore();
+    if (hostStore.hosts.length == 0) {
+      showAddDialog.value = true;
+    } else {
+      selectedTab.value = hostStore.hosts[0].hostname;
     }
-    isLoggedIn.value = hosts.$state.length > 0;
 
-    const onSubmit = () => {
+    const addServer = () => {
       const payload: WinRMPayload = {
-        host: hostname.value,
+        hostname: hostname.value,
         username: username.value,
         password: password.value,
         protocol: protocol.value,
         port: port.value,
       };
-      hosts.$state = [payload];
-      isLoggedIn.value = true;
+      hostStore.hosts = [...hostStore.hosts, payload];
+      showAddDialog.value = false;
+      selectedTab.value = payload.hostname;
+      hostname.value = '';
+      username.value = '';
+      password.value = '';
+      protocol.value = 'http';
+      port.value = 5985;
+    };
+
+    const closeTab = (hostname: string) => {
+      hostStore.hosts = hostStore.hosts.filter(
+        (host) => host.hostname != hostname
+      );
+      if (hostStore.hosts.length == 0) {
+        showAddDialog.value = true;
+      } else {
+        selectedTab.value = hostStore.hosts[0].hostname;
+        setTimeout(() => {
+          selectedTab.value = hostStore.hosts[0].hostname;
+        }, 100);
+      }
     };
     return {
-      tab: ref('tab1'),
-      isLoggedIn,
+      selectedTab,
       hostname,
       username,
       password,
       protocol,
       port,
-      onSubmit,
+      showAddDialog,
+      hostStore,
+      addServer,
+      closeTab,
     };
   },
 });
