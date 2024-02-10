@@ -26,7 +26,7 @@
               padding="xs"
               @click="
                 () => {
-                  closeTab(host.hostname);
+                  promptClose(host.hostname);
                 }
               "
             >
@@ -137,6 +137,31 @@
         </q-form>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="confirmClose" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="question_mark" color="primary" text-color="white" />
+          <span class="q-ml-sm">
+            Are you sure you want to close this server?
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Yes"
+            color="red"
+            v-close-popup
+            @click="
+              () => {
+                closeTab(confirmedTab);
+              }
+            "
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -176,6 +201,8 @@ export default defineComponent({
     const password = ref('');
     const protocol = ref('http');
     const port = ref(5985);
+    const confirmClose = ref(false);
+    const confirmedTab = ref<string>('');
 
     const hostStore = useHostsStore();
     if (hostStore.hosts.length == 0) {
@@ -215,6 +242,12 @@ export default defineComponent({
         }, 100);
       }
     };
+
+    const promptClose = (tab: string) => {
+      confirmedTab.value = tab;
+      confirmClose.value = true;
+    };
+
     return {
       selectedTab,
       hostname,
@@ -224,8 +257,11 @@ export default defineComponent({
       port,
       showAddDialog,
       hostStore,
+      confirmClose,
+      confirmedTab,
       addServer,
       closeTab,
+      promptClose,
     };
   },
 });

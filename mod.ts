@@ -25,28 +25,28 @@ router.get("/api/:apiName", async (ctx) => {
     username: ctx.request.url.searchParams.get("username")!,
     password: ctx.request.url.searchParams.get("password")!,
     protocol: (ctx.request.url.searchParams.get("protocol")!),
-    host: ctx.request.url.searchParams.get("host")!,
+    hostname: ctx.request.url.searchParams.get("hostname")!,
     port: Number(ctx.request.url.searchParams.get("port")!),
   };
 
   if (ctx.params.apiName === "service") {
     let services: Array<ServiceModel>;
-    if (cache.has("services")) {
-      services = cache.get("services")!;
+    if (cache.has(`${payload.hostname}-services`)) {
+      services = cache.get(`${payload.hostname}-services`)!;
     } else {
       services = await getServices(payload);
-      cache.put("services", services);
+      cache.put(`${payload.hostname}-services`, services);
     }
     ctx.response.body = services;
   }
 
   if (ctx.params.apiName === "dependencies") {
     let deps: Array<DependenciesModel>;
-    if (cache.has("dependencies")) {
-      deps = cache.get("dependencies")!;
+    if (cache.has(`${payload.hostname}-dependencies`)) {
+      deps = cache.get(`${payload.hostname}-dependencies`)!;
     } else {
       deps = await getDependsServices(payload);
-      cache.put("dependencies", deps);
+      cache.put(`${payload.hostname}-dependencies`, deps);
     }
     ctx.response.body = deps;
   }
@@ -54,11 +54,11 @@ router.get("/api/:apiName", async (ctx) => {
   if (ctx.params.apiName === "system") {
     let system: SystemModel;
 
-    if (cache.has("system-info")) {
-      system = cache.get("system-info")!;
+    if (cache.has(`${payload.hostname}-system-info`)) {
+      system = cache.get(`${payload.hostname}-system-info`)!;
     } else {
       system = await getSystem(payload);
-      cache.put("system-info", system);
+      cache.put(`${payload.hostname}-system-info`, system);
     }
 
     ctx.response.body = system;
@@ -70,7 +70,7 @@ router.post("/api/service", async (ctx) => {
     username: ctx.request.url.searchParams.get("username")!,
     password: ctx.request.url.searchParams.get("password")!,
     protocol: (ctx.request.url.searchParams.get("protocol")!),
-    host: ctx.request.url.searchParams.get("host")!,
+    hostname: ctx.request.url.searchParams.get("hostname")!,
     port: Number(ctx.request.url.searchParams.get("port")!),
   };
 
@@ -79,15 +79,17 @@ router.post("/api/service", async (ctx) => {
 
   if (service !== undefined) {
     //Change the cache
-    if (cache.has("services")) {
-      const services = cache.get<ServiceModel[]>("services")!;
+    if (cache.has(`${payload.hostname}-services`)) {
+      const services = cache.get<ServiceModel[]>(
+        `${payload.hostname}-services`,
+      )!;
       const cachedServiceIndex = services.findIndex((v) => {
         return v.name === service.name;
       });
 
       if (cachedServiceIndex > -1) {
         services[cachedServiceIndex] = service;
-        cache.put("services", services);
+        cache.put(`${payload.hostname}-services`, services);
       }
     }
   }

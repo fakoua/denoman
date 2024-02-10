@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { PropType, defineComponent, onMounted, ref } from 'vue';
 import _filter from 'lodash/filter';
 import _groupBy from 'lodash/groupBy';
 import _sortBy from 'lodash/sortBy';
@@ -85,6 +85,7 @@ import {
   SystemModel,
   ServiceStatusModel,
   DependenciesModel,
+  WinRMPayload,
 } from '../models';
 
 type DashboardModel = {
@@ -99,6 +100,12 @@ type DashboardModel = {
 
 export default defineComponent({
   name: 'DashboardComponent',
+  props: {
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
+    },
+  },
   components: {
     DCardComponent,
     SystemInfoComponent,
@@ -109,7 +116,7 @@ export default defineComponent({
     ServiceTypeComponent,
   },
 
-  setup() {
+  setup(props) {
     const model = ref<DashboardModel>({
       services: {},
       drivers: {},
@@ -217,19 +224,19 @@ export default defineComponent({
     };
 
     const loadServices = async (): Promise<ServiceModel[] | undefined> => {
-      const res = await serviceApi.getServices();
+      const res = await serviceApi.getServices(props.host);
       return res;
     };
 
     const loadSystem = async (): Promise<SystemModel> => {
-      const res = await serviceApi.getSystemInformation();
+      const res = await serviceApi.getSystemInformation(props.host);
       return res;
     };
 
     const loadDependencies = async (): Promise<
       DependenciesModel[] | undefined
     > => {
-      const res = await serviceApi.getDependencies();
+      const res = await serviceApi.getDependencies(props.host);
       return res;
     };
 

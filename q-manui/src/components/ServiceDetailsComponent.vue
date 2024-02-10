@@ -146,7 +146,12 @@
 import { PropType, defineComponent, ref } from 'vue';
 import { getSystemInformation } from './service-api';
 
-import { ControlAction, ServiceModel, SystemModel } from './models';
+import {
+  ControlAction,
+  ServiceModel,
+  SystemModel,
+  WinRMPayload,
+} from './models';
 import { bus } from 'boot/bus';
 
 export default defineComponent({
@@ -156,6 +161,10 @@ export default defineComponent({
     service: {
       type: Object as PropType<ServiceModel>,
       required: false,
+    },
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
     },
   },
 
@@ -173,11 +182,11 @@ export default defineComponent({
 
   emits: ['onOpenService'],
 
-  setup() {
+  setup(props) {
     const data = ref<SystemModel>({} as SystemModel);
 
     const isLoading = ref(true);
-    getSystemInformation()
+    getSystemInformation(props.host)
       .then((response) => {
         data.value = response;
       })

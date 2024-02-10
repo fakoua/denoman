@@ -90,7 +90,12 @@ import { PropType, defineComponent, onMounted, ref } from 'vue';
 
 import * as serviceApi from '../service-api';
 
-import { DependenciesModel, ServiceModel, TreeNodeDeps } from '../models';
+import {
+  DependenciesModel,
+  ServiceModel,
+  TreeNodeDeps,
+  WinRMPayload,
+} from '../models';
 
 export default defineComponent({
   name: 'DependenciesTabComponent',
@@ -99,6 +104,10 @@ export default defineComponent({
     service: {
       type: Object as PropType<ServiceModel>,
       required: false,
+    },
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
     },
   },
 
@@ -112,8 +121,8 @@ export default defineComponent({
     const isLoading = ref(true);
     const getNodeChildren = async (key: string): Promise<TreeNodeDeps[]> => {
       const name = key.split('@')[0];
-      const services = await serviceApi.getServices();
-      const deps = await serviceApi.getDependencies();
+      const services = await serviceApi.getServices(props.host);
+      const deps = await serviceApi.getDependencies(props.host);
       if (services && deps) {
         const dependsOn: Array<DependenciesModel> = deps.filter(
           (v: DependenciesModel) => {
@@ -141,8 +150,8 @@ export default defineComponent({
       key: string
     ): Promise<TreeNodeDeps[]> => {
       const name = key.split('@')[0];
-      const services = await serviceApi.getServices();
-      const deps = await serviceApi.getDependencies();
+      const services = await serviceApi.getServices(props.host);
+      const deps = await serviceApi.getDependencies(props.host);
       if (services && deps) {
         const antecedentsOn: Array<DependenciesModel> = deps.filter(
           (v: DependenciesModel) => {

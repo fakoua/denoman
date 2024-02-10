@@ -9,7 +9,7 @@
     <div class="s-right col-grow">
       <q-tab-panels v-model="tab">
         <q-tab-panel name="dashboard">
-          <dashboard-component />
+          <dashboard-component :host="host" />
         </q-tab-panel>
         <q-tab-panel name="services" style="padding: 0">
           <q-splitter
@@ -21,6 +21,7 @@
               <div class="q-a-xl no-margin no-padding">
                 <service-details-component
                   :service="selectedService"
+                  :host="host"
                   v-on:on-open-service="
             (svr: ServiceModel) => {
               openService(svr);
@@ -76,6 +77,7 @@
     <service-window-component
       v-if="isDialogOpen"
       :service="doubleClickedService"
+      :host="host"
     />
   </dialog>
 </template>

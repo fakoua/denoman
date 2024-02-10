@@ -32,7 +32,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="dependencies">
-            <dependencies-tab-component :service="service" />
+            <dependencies-tab-component :service="service" :host="host" />
           </q-tab-panel>
 
           <q-tab-panel name="performance"> Not Implemented </q-tab-panel>
@@ -47,7 +47,7 @@
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 
-import { ServiceModel } from '../models';
+import { ServiceModel, WinRMPayload } from '../models';
 import GeneralTabComponent from './GeneralTabComponent.vue';
 import DependenciesTabComponent from './DependenciesTabComponent.vue';
 
@@ -59,6 +59,10 @@ export default defineComponent({
     service: {
       type: Object as PropType<ServiceModel>,
       required: false,
+    },
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
     },
   },
 

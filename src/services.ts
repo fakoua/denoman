@@ -17,7 +17,11 @@ export async function getServices(
     "Get-WmiObject Win32_SystemDriver | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1";
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
   );
   let res = await context.runPowerShell(query);
   if (res.exitCode !== 0) {
@@ -47,7 +51,11 @@ export async function getDependsServices(
     "Get-CimInstance -ClassName Win32_DependentService | Select-Object -Property Antecedent, Dependent | Format-List";
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
   );
 
   const res = await context.runPowerShell(query);
@@ -73,7 +81,11 @@ export async function actions(
   const command = `${action}-Service -Name ${serviceName}`;
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
   );
 
   const res = await context.runPowerShell(command);
@@ -104,7 +116,11 @@ export async function getService(
     `Get-WmiObject win32_service -Filter "Name='${name}'" | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1`;
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
-    { hostname: payload.host, port: payload.port, protocol: payload.protocol },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
   );
   const res = await context.runPowerShell(query);
 

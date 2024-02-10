@@ -36,7 +36,7 @@ export type DependenciesModel = {
 export type WinRMPayload = {
   username: string;
   password: string;
-  host: string;
+  hostname: string;
   port: number;
   protocol: string;
 };
