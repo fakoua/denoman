@@ -4,6 +4,18 @@
       <div v-if="!service" class="text-weight-bold text-primary mb-12">
         Select a service
       </div>
+      <div v-if="!service">
+        <q-skeleton
+          type="QBtn"
+          animation="none"
+          style="width: 76px; height: 28px"
+        />
+        <q-skeleton type="text" animation="none" width="75%" />
+        <q-skeleton type="text" animation="none" />
+        <br />
+        <q-skeleton type="text" animation="none" width="65%" />
+        <q-skeleton type="rect" animation="none" height="40px" />
+      </div>
       <div v-if="service">
         <div class="text-weight-bold text-primary mb-12">
           {{ service.caption }}
@@ -95,7 +107,7 @@
       <div v-if="isLoading">
         <q-spinner-ball color="primary" size="2em" />
       </div>
-      <div v-if="!isLoading">
+      <div v-if="!isLoading" class="sub-fotter">
         <div class="text-weight-bold">{{ data.csName }}</div>
         <div class="mb-12 div-windows">
           {{ data.caption }} ({{ data.osArchitecture }})
@@ -114,7 +126,8 @@
 }
 .container {
   padding: 16px;
-  height: 88vh;
+  height: calc(100vh - 90px);
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 .mb-12 {
   margin-bottom: 12px;
@@ -124,9 +137,13 @@
 }
 .footer {
   overflow: auto;
-  height: 140px;
+  height: 160px;
   position: absolute;
   bottom: 0;
+}
+.sub-fotter {
+  overflow: auto;
+  height: 120px;
 }
 .div-system {
   border-bottom: 2px solid #1976d2;

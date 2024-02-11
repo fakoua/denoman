@@ -1,6 +1,7 @@
 <template>
   <q-table
     bordered
+    square
     :rows="data"
     :columns="columns"
     color="primary"
@@ -85,14 +86,36 @@
     </template>
     <template v-slot:top-right>
       <q-input
+        ref="filterInput"
         borderless
         dense
-        debounce="300"
+        filled
+        clearable
         v-model="filter"
-        placeholder="Search"
+        placeholder="Search Services"
+        style="width: 300px"
+        input-style="width: 100%;"
+        @focus="
+          () => {
+            filterFocused = true;
+          }
+        "
+        @blur="
+          () => {
+            filterFocused = false;
+          }
+        "
       >
         <template v-slot:append>
-          <q-icon name="search" />
+          <q-chip
+            outline
+            square
+            color="grey-14"
+            text-color="white"
+            label="Ctrl+K"
+            v-if="!filterFocused"
+          />
+          <q-icon name="search" v-if="filterFocused" />
         </template>
       </q-input>
     </template>
@@ -147,8 +170,8 @@
   transition: transform 0.28s, background-color 0.28s;
 }
 .my-sticky-header-table {
-  height: 88vh;
-  width: calc(100vw - 354px);
+  height: calc(100vh - 94px);
+  width: 100%;
 }
 .my-sticky-header-table .q-table__top,
 .my-sticky-header-table .q-table__bottom,
@@ -177,7 +200,7 @@
 </style>
 
 <script lang="ts">
-import { PropType, defineComponent, onMounted, ref } from 'vue';
+import { PropType, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 
 import * as serviceApi from './service-api';
 import { ControlAction, ServiceModel, WinRMPayload } from './models';
@@ -228,6 +251,9 @@ const columns: QTableColumn[] = [
     field: 'startName',
     sortable: true,
     align: 'left',
+    format: (val: string) => {
+      return val.replaceAll('|', '\\');
+    },
   },
   {
     name: 'description',
@@ -291,6 +317,8 @@ export default defineComponent({
     const showSystemDriver = ref(false);
     const disabledControls = ref<boolean[]>([true, true, true, true, true]);
     const selected = ref([] as ServiceModel[]);
+    const filterInput = ref(null);
+    const filterFocused = ref(false);
     const $q = useQuasar();
 
     const loadServices = async () => {
@@ -313,7 +341,17 @@ export default defineComponent({
       disabledControls.value[4] = service.state !== 'Running';
     };
 
+    const captureCtrlK = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        if (filterInput.value) {
+          (filterInput.value as HTMLElement).focus();
+        }
+      }
+    };
+
     onMounted(async () => {
+      document.addEventListener('keydown', captureCtrlK);
       await loadServices();
       isLoading.value = false;
 
@@ -334,6 +372,11 @@ export default defineComponent({
       });
     });
 
+    onUnmounted(() => {
+      document.removeEventListener('keydown', captureCtrlK);
+      bus.off('controlService');
+    });
+
     return {
       columns,
       data,
@@ -346,6 +389,8 @@ export default defineComponent({
       services,
       showSystemDriver,
       disabledControls,
+      filterInput,
+      filterFocused,
       setDisabledControls,
     };
   },

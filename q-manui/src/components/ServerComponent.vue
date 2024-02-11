@@ -91,7 +91,7 @@ div.s-left {
 div.s-right {
   overflow: hidden;
   width: calc(100vw - 70px);
-  height: calc(100vh - 100px);
+  height: calc(100vh - 90px);
   border-left: 1px solid rgba(0, 0, 0, 0.12);
 }
 .dialog-title {
