@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-avatar>
-          <img src="/icons/denoman.svg" />
+          <img src="/icons/denoman.svg" alt="DenoMan" />
         </q-avatar>
         <q-toolbar-title> DenoMan </q-toolbar-title>
 

@@ -1,3 +1,4 @@
+// NOSONAR
 // deno-lint-ignore no-explicit-any
 type IgnoreAny = any;
 

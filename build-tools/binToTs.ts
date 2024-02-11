@@ -112,7 +112,7 @@ export async function tsToZip(wwwRoot: string): Promise<string> {
 
 async function getUiVersion(indexFile: string): Promise<string> {
   const content = await Deno.readTextFile(indexFile);
-  const regEx = /content\=\"DenoMan\s(.*?)\"\>/gm;
+  const regEx = /content="DenoMan\s(.*?)">/gm;
   const matches = content.matchAll(regEx);
   let version = "0";
   for (const m of matches) {

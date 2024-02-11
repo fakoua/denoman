@@ -143,7 +143,7 @@ export async function getService(
  */
 function processDependsWmi(wmi: string): Array<DependenciesModel> {
   const rtnVal: Array<DependenciesModel> = [];
-  const regexAnt = /Antecedent.*\"(.*?)\"/gim; // matches Antecedent : Win32_SystemDriver (Name = "WinVerbs")
+  const regexAnt = /Antecedent.*"(.*?)"/gim; // matches Antecedent : Win32_SystemDriver (Name = "WinVerbs")
   const matchesAnt = wmi.matchAll(regexAnt);
   for (const match of matchesAnt) {
     rtnVal.push({
@@ -152,7 +152,7 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
     });
   }
 
-  const regexDep = /Dependent.*\"(.*?)\"/gim; // matches Dependent : Win32_SystemDriver (Name = "WinVerbs")
+  const regexDep = /Dependent.*"(.*?)"/gim; // matches Dependent : Win32_SystemDriver (Name = "WinVerbs")
   const matchesDep = wmi.matchAll(regexDep);
 
   let count = 0;
@@ -171,7 +171,7 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
  */
 function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
   wmi = wmi.replaceAll("\\", "|");
-  const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: ServiceModel[] = [];
 

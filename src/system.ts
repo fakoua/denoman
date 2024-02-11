@@ -60,7 +60,7 @@ async function getMemory(payload: WinRMPayload): Promise<string> {
 
 function process_OperatingSystem_Wmi(wmi: string): SystemModel {
   wmi = wmi.replaceAll("\\", "|");
-  const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: SystemModel[] = [];
 
@@ -81,7 +81,7 @@ function process_OperatingSystem_Wmi(wmi: string): SystemModel {
 
 function process_Win32_Processor_Wmi(wmi: string): string {
   wmi = wmi.replaceAll("\\", "|");
-  const regex = /\{(.*?)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: string[] = [];
 

@@ -36,7 +36,9 @@
                     <td class="text-weight-bolder" style="width: 100px">
                       Type
                     </td>
-                    <td class="text-weight-bolder" width="200">Description</td>
+                    <td class="text-weight-bolder" style="width: 200px">
+                      Description
+                    </td>
                   </tr>
                   <tr>
                     <td>Adapter</td>

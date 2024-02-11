@@ -13,9 +13,8 @@ const compressProcess = async (
   archiveName = "./archive.zip",
   options?: CompressOptions,
 ): Promise<number> => {
-  const filesList = typeof files === "string"
-    ? files
-    : files.join(Deno.build.os === "windows" ? ", " : " ");
+  const joinType = Deno.build.os === "windows" ? ", " : " ";
+  const filesList = typeof files === "string" ? files : files.join(joinType);
 
   const p = new Deno.Command("PowerShell", {
     args: [
