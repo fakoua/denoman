@@ -9,5 +9,8 @@
   },
   "fmt": {
     "exclude": ["q-manui/"]
+  },
+  "test": {
+    "exclude": ["q-manui/"]
   }
 }
