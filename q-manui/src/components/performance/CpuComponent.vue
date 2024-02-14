@@ -16,8 +16,6 @@
   </q-card>
 </template>
 
-<style lang="css" scoped></style>
-
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
 import _fill from 'lodash/fill';
