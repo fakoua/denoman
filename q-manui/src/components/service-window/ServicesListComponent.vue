@@ -202,8 +202,8 @@
 <script lang="ts">
 import { PropType, defineComponent, onMounted, onUnmounted, ref } from 'vue';
 
-import * as serviceApi from './service-api';
-import { ControlAction, ServiceModel, WinRMPayload } from './models';
+import * as serviceApi from '../service-api';
+import { ControlAction, ServiceModel, WinRMPayload } from '../models';
 import { bus } from 'boot/bus';
 import { QTableColumn, useQuasar } from 'quasar';
 

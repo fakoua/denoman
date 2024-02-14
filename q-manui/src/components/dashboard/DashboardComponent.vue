@@ -55,9 +55,7 @@
       <service-type-component :loading="isLoading" :types="model.types" />
     </div>
 
-    <div class="col-grow q-ma-sm">
-      <service-type-component :loading="isLoading" :types="model.types" />
-    </div>
+    <div class="col-grow q-ma-sm"></div>
     <div class="col-grow q-ma-sm">
       <service-type-component :loading="isLoading" :types="model.types" />
     </div>

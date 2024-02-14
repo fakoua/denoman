@@ -33,6 +33,30 @@ export type DependenciesModel = {
   dependent: string;
 };
 
+export type DiskModel = {
+  name: string;
+  diskReadBytesPersec: number;
+  diskWriteBytesPersec: number;
+  percentDiskTime: number;
+};
+
+export type NetworkModel = {
+  name: string;
+  bytesReceivedPersec: number;
+  bytesSentPersec: number;
+  bytesTotalPersec: number;
+};
+
+export type PerfmonModel = {
+  cpu: number;
+  memory: {
+    totalMemory: number;
+    freeMemory: number;
+  };
+  disks: DiskModel[];
+  networks: NetworkModel;
+};
+
 export type WinRMPayload = {
   username: string;
   password: string;

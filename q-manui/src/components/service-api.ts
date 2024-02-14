@@ -1,7 +1,8 @@
-import { api } from 'boot/axios';
+import { api } from 'boot/axios'
 import {
   ControlAction,
   DependenciesModel,
+  PerfmonModel,
   ServiceModel,
   SystemModel,
   WinRMPayload,
@@ -61,4 +62,9 @@ export async function controlService(
 export async function getSystemInformation(params: WinRMPayload): Promise<SystemModel> {
   const res = await api.get('http://localhost:8001/api/system', { params });
   return res.data as SystemModel;
+}
+
+export async function getPerfmon(params: WinRMPayload): Promise<PerfmonModel> {
+  const res = await api.get('http://localhost:8001/api/perfmon', { params });
+  return res.data as PerfmonModel;
 }

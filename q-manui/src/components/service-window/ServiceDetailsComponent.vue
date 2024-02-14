@@ -161,14 +161,14 @@
 
 <script lang="ts">
 import { PropType, defineComponent, ref } from 'vue';
-import { getSystemInformation } from './service-api';
+import { getSystemInformation } from '../service-api';
 
 import {
   ControlAction,
   ServiceModel,
   SystemModel,
   WinRMPayload,
-} from './models';
+} from '../models';
 import { bus } from 'boot/bus';
 
 export default defineComponent({

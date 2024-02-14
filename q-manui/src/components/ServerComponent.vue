@@ -3,13 +3,17 @@
     <div class="s-left">
       <q-tabs v-model="tab" vertical>
         <q-tab name="dashboard" icon="dashboard" />
+        <q-tab name="performance" icon="insights" />
         <q-tab name="services" icon="miscellaneous_services" />
       </q-tabs>
     </div>
     <div class="s-right col-grow">
-      <q-tab-panels v-model="tab">
+      <q-tab-panels v-model="tab" keep-alive keep-alive-include="performance">
         <q-tab-panel name="dashboard">
           <dashboard-component :host="host" />
+        </q-tab-panel>
+        <q-tab-panel name="performance">
+          <perfmon-component :host="host" />
         </q-tab-panel>
         <q-tab-panel name="services" style="padding: 0">
           <q-splitter
@@ -145,9 +149,10 @@ dialog[open]::backdrop {
 import { PropType, defineComponent, onMounted, ref } from 'vue';
 import { bus } from 'boot/bus';
 
-import ServicesListComponent from '../components/ServicesListComponent.vue';
-import ServiceDetailsComponent from '../components/ServiceDetailsComponent.vue';
+import ServicesListComponent from '../components/service-window/ServicesListComponent.vue';
+import ServiceDetailsComponent from '../components/service-window/ServiceDetailsComponent.vue';
 import ServiceWindowComponent from '../components/service-window/ServiceWindowComponent.vue';
+import PerfmonComponent from '../components/performance/PerfmonComponent.vue';
 import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
 
 import { ServiceModel, WinRMPayload } from './models';
@@ -159,6 +164,7 @@ export default defineComponent({
     ServiceDetailsComponent,
     ServiceWindowComponent,
     DashboardComponent,
+    PerfmonComponent,
   },
   props: {
     host: {
