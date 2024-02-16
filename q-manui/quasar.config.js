@@ -76,9 +76,10 @@ module.exports = configure(function (/* ctx */) {
       //   [ 'package-name', { ..options.. } ]
       // ]
       extendViteConf(viteConf) {
-        viteConf.build.rollupOptions = {
-          external: ['apexcharts'],
-        };
+        // viteConf.build.rollupOptions = {
+        //   external: ['apexcharts'],
+        // };
+        viteConf.build.minify = true;
       },
     },
 
