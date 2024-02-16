@@ -18,7 +18,7 @@ const ChartOptions =  (noMax: boolean) => {
         enabled: false,
       },
     },
-    colors: ['#3f51b5'],
+    colors: ['#0b219b'],
     dataLabels: {
       enabled: false,
     },
@@ -38,7 +38,10 @@ const ChartOptions =  (noMax: boolean) => {
       min: 1,
       max: noMax ?  undefined: 100,
       labels: {
-        show: false,
+        show: true,
+        formatter: (value: number) => {
+          return `${value.toFixed(0)}%`
+        },
       },
     },
     legend: {
@@ -65,4 +68,18 @@ const ChartOptions =  (noMax: boolean) => {
 
 export function getChartOptions(noMax= false) {
   return _cloneDeep(ChartOptions(noMax));
+}
+
+export function formatBytesPerSec(bytesPerSec: number): string {
+  const units = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps'];
+
+  let index = 0;
+  let speed = bytesPerSec * 8; // Convert bytes per second to bits per second
+
+  while (speed >= 1024 && index < units.length - 1) {
+      speed /= 1024;
+      index++;
+  }
+
+  return `${speed.toFixed(2)} ${units[index]}`;
 }

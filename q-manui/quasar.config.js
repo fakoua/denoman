@@ -19,6 +19,7 @@ module.exports = configure(function (/* ctx */) {
       // rawOptions: {},
       warnings: true,
       errors: true,
+      external: ['apexcharts'],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -42,7 +43,7 @@ module.exports = configure(function (/* ctx */) {
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
       //'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
+      //'material-icons', // optional, you are not bound to it
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
@@ -51,7 +52,7 @@ module.exports = configure(function (/* ctx */) {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         //node: 'node20',
       },
-
+      external: ['apexcharts'],
       vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
@@ -74,12 +75,18 @@ module.exports = configure(function (/* ctx */) {
       // vitePlugins: [
       //   [ 'package-name', { ..options.. } ]
       // ]
+      extendViteConf(viteConf) {
+        viteConf.build.rollupOptions = {
+          external: ['apexcharts'],
+        };
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
       open: false, // opens browser window automatically
+      vueDevtools: true,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -195,7 +202,6 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
     bex: {
       contentScripts: ['my-content-script'],
-
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
     },

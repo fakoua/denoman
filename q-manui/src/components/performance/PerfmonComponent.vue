@@ -13,23 +13,25 @@
     </div>
   </div>
   <div v-if="firstLoad">
-    <q-tabs v-model="selectedTab" align="right">
-      <q-tab name="cpu" label="CPU" />
-      <q-tab name="memory" label="Memory" />
+    <q-tabs v-model="selectedTab" align="right" inline-label>
+      <q-tab name="cpu" icon="memory" label="CPU" class="tab-cpu" />
+      <q-tab name="memory" icon="storage" label="Memory" class="tab-memory" />
       <q-tab
         v-for="disk in perfmon.disks"
         :key="disk.name"
         :name="disk.name"
         :label="'Disk ' + disk.name"
+        icon="hd"
+        class="tab-disk"
       />
-      <q-tab name="network" label="Network" />
+      <q-tab name="network" label="Network" icon="wifi" class="tab-network" />
     </q-tabs>
     <q-tab-panels v-model="selectedTab" keep-alive>
       <q-tab-panel name="cpu">
-        <cpu-component :perfmon="perfmon" />
+        <cpu-component :perfmon="perfmon" :system="systemInfo" />
       </q-tab-panel>
       <q-tab-panel name="memory">
-        <memory-component :perfmon="perfmon" />
+        <memory-component :perfmon="perfmon" :system="systemInfo" />
       </q-tab-panel>
       <q-tab-panel
         v-for="disk in perfmon.disks"
@@ -54,6 +56,18 @@
   margin-left: 10px;
   float: right;
 }
+.tab-cpu {
+  color: #ff4560;
+}
+.tab-memory {
+  color: #0b219b;
+}
+.tab-disk {
+  color: #ffc107;
+}
+.tab-network {
+  color: #4caf50;
+}
 </style>
 
 <script lang="ts">
@@ -64,7 +78,7 @@ import DiskComponent from './DiskComponent.vue';
 import NetworkComponent from './NetworkComponent.vue';
 
 import * as serviceApi from '../service-api';
-import { WinRMPayload, PerfmonModel } from '../models';
+import { WinRMPayload, PerfmonModel, SystemModel } from '../models';
 
 export default defineComponent({
   name: 'PerfmonComponent',
@@ -84,6 +98,14 @@ export default defineComponent({
   setup(props) {
     const firstLoad = ref(false);
     const selectedTab = ref('cpu');
+    const systemInfo = ref<SystemModel>({
+      caption: '',
+      csName: '',
+      memory: '',
+      osArchitecture: '',
+      processorName: '',
+    });
+
     const perfmon = ref<PerfmonModel>({
       cpu: -1,
       memory: {
@@ -109,8 +131,14 @@ export default defineComponent({
       }
     };
 
+    const loadSystem = async (): Promise<SystemModel> => {
+      const res = await serviceApi.getSystemInformation(props.host);
+      return res;
+    };
+
     onMounted(async () => {
-      updateData();
+      systemInfo.value = await loadSystem();
+      await updateData();
     });
 
     onUnmounted(() => {
@@ -120,7 +148,7 @@ export default defineComponent({
       }
     });
 
-    return { firstLoad, perfmon, selectedTab };
+    return { firstLoad, perfmon, selectedTab, systemInfo };
   },
 });
 </script>
