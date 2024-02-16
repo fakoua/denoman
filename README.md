@@ -27,4 +27,10 @@ deno run -A --reload https://deno.land/x/denoman/mod.ts
 
 ## Screenshots
 
+![DenoMan Dashboard](https://github.com/fakoua/denoman/blob/main/resources/ss01.png?raw=true)
+
+![DenoMan PerfMon](https://github.com/fakoua/denoman/blob/main/resources/ss02.png?raw=true)
+
+![DenoMan Service Manager](https://github.com/fakoua/denoman/blob/main/resources/ss03.png?raw=true)
+
 Together, let's make DenoMan the go-to solution for managing Windows systems with Deno.
