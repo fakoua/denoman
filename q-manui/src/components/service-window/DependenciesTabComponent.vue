@@ -11,13 +11,13 @@
     <div class="q-gutter-md" v-if="!isLoading">
       <q-card class="card-height shadow-1">
         <q-card-section>
-          <div class="small-font">This service depends on:</div>
+          <div class="small-font">Dependencies:</div>
           <q-tree
             :nodes="dependentsNode"
             node-key="name"
             label-key="caption"
             @lazy-load="onLazyLoad"
-            no-nodes-label="No services"
+            no-nodes-label="No Dependencies"
           >
             <template v-slot:default-header="props">
               <div
@@ -35,15 +35,13 @@
       </q-card>
       <q-card class="card-height shadow-1">
         <q-card-section>
-          <div class="small-font">
-            The following services depend on this service:
-          </div>
+          <div class="small-font">Dependents:</div>
           <q-tree
             :nodes="antecedentsNode"
             node-key="name"
             label-key="caption"
             @lazy-load="onLazyLoadAntecedent"
-            no-nodes-label="No system drivers"
+            no-nodes-label="No Dependents"
           >
             <template v-slot:default-header="props">
               <div
@@ -119,6 +117,7 @@ export default defineComponent({
 
   setup(props) {
     const isLoading = ref(true);
+
     const getNodeChildren = async (key: string): Promise<TreeNodeDeps[]> => {
       const name = key.split('@')[0];
       const services = await serviceApi.getServices(props.host);
@@ -127,12 +126,12 @@ export default defineComponent({
         const dependsOn: Array<DependenciesModel> = deps.filter(
           (v: DependenciesModel) => {
             return v.dependent == name;
-          }
+          },
         );
 
         return dependsOn.map((v) => {
           const svr = (services as ServiceModel[]).find(
-            (s: ServiceModel) => s.name == v.antecedent
+            (s: ServiceModel) => s.name == v.antecedent,
           );
           return {
             caption: svr?.caption,
@@ -147,7 +146,7 @@ export default defineComponent({
     };
 
     const getNodeChildrenAntecedent = async (
-      key: string
+      key: string,
     ): Promise<TreeNodeDeps[]> => {
       const name = key.split('@')[0];
       const services = await serviceApi.getServices(props.host);
@@ -156,12 +155,12 @@ export default defineComponent({
         const antecedentsOn: Array<DependenciesModel> = deps.filter(
           (v: DependenciesModel) => {
             return v.antecedent == name;
-          }
+          },
         );
 
         return antecedentsOn.map((v) => {
           const svr = (services as ServiceModel[]).find(
-            (s: ServiceModel) => s.name == v.dependent
+            (s: ServiceModel) => s.name == v.dependent,
           );
           return {
             caption: svr?.caption,
@@ -177,10 +176,10 @@ export default defineComponent({
 
     onMounted(async () => {
       dependentsNode.value = await getNodeChildren(
-        `${props.service?.name}@root`
+        `${props.service?.name}@root`,
       );
       antecedentsNode.value = await getNodeChildrenAntecedent(
-        `${props.service?.name}@root`
+        `${props.service?.name}@root`,
       );
       isLoading.value = false;
     });

@@ -25,7 +25,7 @@
     "
     @row-dblclick="
       (_, row) => {
-        onDoubleClick(row);
+        openService(row);
       }
     "
   >
@@ -119,55 +119,183 @@
         </template>
       </q-input>
     </template>
-    <template v-slot:body-cell="props">
-      <q-td :props="props" :class="rowStyle(props.row)">
-        {{ props.value }}
-      </q-td>
-    </template>
-    <template v-slot:item="props">
-      <div
-        class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition grid-cell"
-        :style="props.selected ? 'transform: scale(0.98);' : ''"
+
+    <template v-slot:body="props">
+      <q-tr
+        :props="props"
+        v-on:dblclick="
+          () => {
+            openService(props.row);
+          }
+        "
+        v-on:click="
+          (e: PointerEvent) => {
+            onSelect(props.row);
+          }
+        "
+        @contextmenu="
+          (e: MouseEvent) => {
+            onSelect(props.row);
+          }
+        "
+        data-cm="true"
       >
-        <q-card
-          bordered
-          flat
-          :class="
-            props.selected ? ($q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2') : ''
-          "
-          @click="
-            () => {
-              props.selected = true;
-            }
-          "
+        <q-menu
+          ref="contextMenu"
+          transition-show="jump-down"
+          transition-hide="jump-up"
+          touch-position
+          context-menu
+          auto-close
         >
-          <q-card-section style="padding: 0">
-            <q-list bordered>
-              <q-item clickable v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="settings" size="40px" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ props.row.caption }}</q-item-label>
-                  <q-item-label class="grid-state" caption lines="1">{{
-                    props.row.state
-                  }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </q-card>
-      </div>
+          <q-list dense style="min-width: 120px">
+            <q-item>
+              <q-item-section>Actions</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item
+              clickable
+              @click="controlService('Start')"
+              :disable="disableStart"
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="play_arrow" size="20px" />
+              </q-item-section>
+              <q-item-section>Start</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              @click="controlService('Stop')"
+              :disable="disableStop"
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="stop" size="20px" />
+              </q-item-section>
+              <q-item-section>Stop</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              @click="controlService('Suspend')"
+              :disable="disablePause"
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="pause" size="20px" />
+              </q-item-section>
+              <q-item-section>Pause</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              @click="controlService('Resume')"
+              :disable="disableResume"
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="motion_photos_paused" size="20px" />
+              </q-item-section>
+              <q-item-section>Resume</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              @click="controlService('Restart')"
+              :disable="disableRestart"
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="replay" size="20px" />
+              </q-item-section>
+              <q-item-section>Restart</q-item-section>
+            </q-item>
+            <q-separator />
+            <q-item
+              clickable
+              @click="
+                () => {
+                  openService(selected[0]);
+                }
+              "
+            >
+              <q-item-section avatar class="q-item-section-item">
+                <q-icon name="folder_open" size="20px" />
+              </q-item-section>
+              <q-item-section>Details</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+        <q-td style="padding: 0">
+          <q-checkbox
+            v-model="props.selected"
+            v-on:click="
+              () => {
+                onSelect(props.row);
+              }
+            "
+          />
+        </q-td>
+        <q-td
+          v-for="col in props.cols"
+          :key="col.name"
+          :props="props"
+          :class="cellClass(props.row)"
+          :style="columnStyle(col)"
+        >
+          <q-btn
+            v-if="col.name === 'caption'"
+            size="sm"
+            flat
+            dense
+            @click="
+              (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                if (!props.expand) {
+                  onSelect(props.row);
+                  if (expendedRowProps.rowIndex > -1) {
+                    expendedRowProps.expand = false;
+                  }
+                  expendedRowProps = props;
+                } else {
+                  expendedRowProps = { expand: false, rowIndex: -1 };
+                }
+                props.expand = !props.expand;
+              }
+            "
+            :icon="props.expand ? 'expand_less' : 'expand_more'"
+          />
+          {{ col.value }}
+        </q-td>
+      </q-tr>
+      <q-tr v-show="props.expand" :props="props">
+        <q-td colspan="100%" style="padding-left: 6px; background-color: white">
+          <div class="text-left">
+            <dependencies-row-component
+              :host="host"
+              :service="props.row"
+              v-if="props.expand"
+              @control-service="controlService"
+              @open-service="
+                () => {
+                  openService(props.row);
+                }
+              "
+            />
+          </div>
+        </q-td>
+      </q-tr>
     </template>
   </q-table>
 </template>
 
 <style lang="css" scoped>
+.q-item-section-item {
+  padding-right: 0px;
+  min-width: 30px;
+}
 .grid-state {
   font-size: 12px;
 }
 .grid-style-transition {
-  transition: transform 0.28s, background-color 0.28s;
+  transition:
+    transform 0.28s,
+    background-color 0.28s;
 }
 .my-sticky-header-table {
   height: calc(100vh - 94px);
@@ -200,8 +328,15 @@
 </style>
 
 <script lang="ts">
-import { PropType, defineComponent, onMounted, onUnmounted, ref } from 'vue';
-
+import {
+  PropType,
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  ref,
+} from 'vue';
+import DependenciesRowComponent from './DependenciesRowComponent.vue';
 import * as serviceApi from '../service-api';
 import { ControlAction, ServiceModel, WinRMPayload } from '../models';
 import { bus } from 'boot/bus';
@@ -264,6 +399,11 @@ const columns: QTableColumn[] = [
   },
 ];
 
+type ExpandedRowProps = {
+  expand: boolean;
+  rowIndex: number;
+};
+
 export default defineComponent({
   name: 'ServicesListComponent',
 
@@ -273,6 +413,9 @@ export default defineComponent({
       required: true,
     },
   },
+  components: {
+    DependenciesRowComponent,
+  },
   methods: {
     onSelect(row: ServiceModel) {
       this.selected = [row];
@@ -281,14 +424,17 @@ export default defineComponent({
       this.setDisabledControls(service);
       this.$emit('onSelectService', row as ServiceModel);
     },
-    rowStyle(service: ServiceModel): string {
+    columnStyle(col: QTableColumn) {
+      return col.name === 'caption' ? 'min-width: 310px' : '';
+    },
+    cellClass(service: ServiceModel): string {
       if (service.isSystemDriver) {
         return 'text-blue-6 text-weight-thin system-driver';
       }
       return service.state == 'Stopped' ? 'text-red-6' : 'bg-white text-black';
     },
-    onDoubleClick(row: ServiceModel) {
-      this.$emit('onOpenService', row as ServiceModel);
+    openService(row: ServiceModel) {
+      this.$emit('onOpenService', row);
     },
     controlService(action: ControlAction) {
       if (this.selected && this.selected.length > 0) {
@@ -303,7 +449,7 @@ export default defineComponent({
   watch: {
     showSystemDriver: function (value) {
       this.data = this.services.filter((v) =>
-        value ? true : !v.isSystemDriver
+        value ? true : !v.isSystemDriver,
       );
     },
   },
@@ -319,6 +465,11 @@ export default defineComponent({
     const selected = ref([] as ServiceModel[]);
     const filterInput = ref(null);
     const filterFocused = ref(false);
+    const contextMenu = ref(null);
+    const expendedRowProps = ref<ExpandedRowProps>({
+      expand: false,
+      rowIndex: -1,
+    });
     const $q = useQuasar();
 
     const loadServices = async () => {
@@ -350,6 +501,43 @@ export default defineComponent({
       }
     };
 
+    const disableStart = computed(() => {
+      if (selected.value.length === 0) {
+        return true;
+      }
+      return selected.value[0].state !== 'Stopped';
+    });
+
+    const disableStop = computed(() => {
+      if (selected.value.length === 0) {
+        return true;
+      }
+      return !selected.value[0].acceptStop;
+    });
+
+    const disablePause = computed(() => {
+      if (selected.value.length === 0) {
+        return true;
+      }
+      return !(
+        selected.value[0].state === 'Running' && selected.value[0].acceptPause
+      );
+    });
+
+    const disableResume = computed(() => {
+      if (selected.value.length === 0) {
+        return true;
+      }
+      return selected.value[0].state !== 'Paused';
+    });
+
+    const disableRestart = computed(() => {
+      if (selected.value.length === 0) {
+        return true;
+      }
+      return selected.value[0].state !== 'Running';
+    });
+
     onMounted(async () => {
       document.addEventListener('keydown', captureCtrlK);
       await loadServices();
@@ -361,7 +549,7 @@ export default defineComponent({
         const res = await serviceApi.controlService(
           props.host,
           action.action,
-          action.name
+          action.name,
         );
         await loadServices();
         bus.emit('serviceChanged', res);
@@ -391,6 +579,13 @@ export default defineComponent({
       disabledControls,
       filterInput,
       filterFocused,
+      contextMenu,
+      disableStart,
+      disableStop,
+      disablePause,
+      disableResume,
+      disableRestart,
+      expendedRowProps,
       setDisabledControls,
     };
   },

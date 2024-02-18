@@ -1,9 +1,14 @@
 # denoman
 
-DenoMan is a comprehensive web application designed specifically for managing Windows computers and servers. With features like Service Manager, Dashboard, and PerfMon, DenoMan offers a complete solution for monitoring and managing your systems.
+DenoMan is a comprehensive web application designed specifically for managing
+Windows computers and servers. With features like Service Manager, Dashboard,
+and PerfMon, DenoMan offers a complete solution for monitoring and managing your
+systems.
 
-What makes DenoMan stand out? It's built using the power of Deno and Vue.js with the Quasar framework, bringing you a modern and efficient solution for system management. Plus, everything is tightly integrated with Deno, ensuring a seamless experience.
-
+What makes DenoMan stand out? It's built using the power of Deno and Vue.js with
+the Quasar framework, bringing you a modern and efficient solution for system
+management. Plus, everything is tightly integrated with Deno, ensuring a
+seamless experience.
 
 ## Enable WinRM
 
@@ -33,4 +38,5 @@ deno run -A --reload https://deno.land/x/denoman/mod.ts
 
 ![DenoMan Service Manager](https://github.com/fakoua/denoman/blob/main/resources/ss03.png?raw=true)
 
-Together, let's make DenoMan the go-to solution for managing Windows systems with Deno.
+Together, let's make DenoMan the go-to solution for managing Windows systems
+with Deno.

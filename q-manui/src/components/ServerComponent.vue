@@ -27,10 +27,10 @@
                   :service="selectedService"
                   :host="host"
                   v-on:on-open-service="
-            (svr: ServiceModel) => {
-              openService(svr);
-            }
-          "
+                    (svr: ServiceModel) => {
+                      openService(svr);
+                    }
+                  "
                 />
               </div>
             </template>
@@ -40,15 +40,15 @@
                 <services-list-component
                   :host="host"
                   v-on:on-select-service="
-            (svr: ServiceModel) => {
-              selectedService = svr;
-            }
-          "
+                    (svr: ServiceModel) => {
+                      selectedService = svr;
+                    }
+                  "
                   v-on:on-open-service="
-            (svr: ServiceModel) => {
-              openService(svr);
-            }
-          "
+                    (svr: ServiceModel) => {
+                      openService(svr);
+                    }
+                  "
                 />
               </div>
             </template>
@@ -70,10 +70,12 @@
             color="negative"
             icon="close"
             flat
-            @click="() => {
-          ($refs.serviceWindow as HTMLDialogElement).close();
-          isDialogOpen=false;
-        }"
+            @click="
+              () => {
+                ($refs.serviceWindow as HTMLDialogElement).close();
+                isDialogOpen = false;
+              }
+            "
           />
         </div>
       </div>
@@ -112,6 +114,7 @@ dialog[open] {
   height: 565px !important;
   opacity: 1;
   transform: scaleY(1);
+  animation: myFadeIn 0.5s ease normal;
 }
 
 dialog .caption {
@@ -125,23 +128,33 @@ dialog {
   padding: 0;
   opacity: 0;
   transform: scaleY(0);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out,
-    overlay 0.3s ease-out allow-discrete, display 0.3s ease-out allow-discrete;
-  /* Equivalent to
-  transition: all 0.7s allow-discrete; */
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out,
+    overlay 0.3s ease-out allow-discrete,
+    display 0.3s ease-out allow-discrete;
 }
 
 /* Transition the :backdrop when the dialog modal is promoted to the top layer */
 dialog::backdrop {
   background-color: rgb(0 0 0 / 0%);
-  transition: display 0.3s allow-discrete, overlay 0.3s allow-discrete,
+  transition:
+    display 0.3s allow-discrete,
+    overlay 0.3s allow-discrete,
     background-color 0.3s;
-  /* Equivalent to
-  transition: all 0.7s allow-discrete; */
 }
 
 dialog[open]::backdrop {
   background-color: rgb(0 0 0 / 25%);
+}
+
+@keyframes myFadeIn {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 </style>
 

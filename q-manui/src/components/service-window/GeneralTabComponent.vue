@@ -14,7 +14,7 @@
     </div>
     <div class="text-caption text-primary">Path to executable:</div>
     <div class="q-mb-sm value path">
-      {{ service?.pathName }}
+      {{ service?.pathName.replaceAll('|', '\\') }}
     </div>
     <q-separator class="q-mt-md q-mb-md" />
     <div class="inline">
