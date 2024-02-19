@@ -5,6 +5,7 @@
         <q-tab name="dashboard" icon="dashboard" />
         <q-tab name="performance" icon="insights" />
         <q-tab name="services" icon="miscellaneous_services" />
+        <q-tab name="terminal" icon="terminal" />
       </q-tabs>
     </div>
     <div class="s-right col-grow">
@@ -53,6 +54,9 @@
               </div>
             </template>
           </q-splitter>
+        </q-tab-panel>
+        <q-tab-panel name="terminal">
+          <terminal-component :host="host" />
         </q-tab-panel>
       </q-tab-panels>
     </div>
@@ -167,6 +171,7 @@ import ServiceDetailsComponent from '../components/service-window/ServiceDetails
 import ServiceWindowComponent from '../components/service-window/ServiceWindowComponent.vue';
 import PerfmonComponent from '../components/performance/PerfmonComponent.vue';
 import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
+import TerminalComponent from '../components/terminal/TerminalComponent.vue';
 
 import { ServiceModel, WinRMPayload } from './models';
 
@@ -178,6 +183,7 @@ export default defineComponent({
     ServiceWindowComponent,
     DashboardComponent,
     PerfmonComponent,
+    TerminalComponent,
   },
   props: {
     host: {

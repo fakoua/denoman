@@ -113,9 +113,9 @@
             color="grey-14"
             text-color="white"
             label="Ctrl+K"
-            v-if="!filterFocused"
+            v-if="!filterFocused && !filter"
           />
-          <q-icon name="search" v-if="filterFocused" />
+          <q-icon name="search" v-if="filterFocused && !filter" />
         </template>
       </q-input>
     </template>
@@ -263,7 +263,7 @@
           {{ col.value }}
         </q-td>
       </q-tr>
-      <q-tr v-show="props.expand" :props="props">
+      <q-tr v-if="props.expand" v-show="props.expand" :props="props">
         <q-td colspan="100%" style="padding-left: 6px; background-color: white">
           <div class="text-left">
             <dependencies-row-component

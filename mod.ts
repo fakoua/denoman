@@ -7,6 +7,7 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getPerfmon, getSystem } from "./src/system.ts";
+import { executeCommand } from "./src/command.ts";
 import * as cache from "./src/memcache.ts";
 import {
   DependenciesModel,
@@ -19,6 +20,14 @@ import { initServer } from "./build-tools/binToTs.ts";
 await initServer(await getWwwRoot());
 
 const router = new Router();
+
+router.get("/api/exit", (ctx) => {
+  ctx.response.body = true;
+  console.log("Exiting...");
+  setTimeout(() => {
+    Deno.exit(0);
+  }, 200);
+});
 
 router.get("/api/:apiName", async (ctx) => {
   const payload: WinRMPayload = {
@@ -101,12 +110,21 @@ router.post("/api/service", async (ctx) => {
   ctx.response.body = service;
 });
 
-router.put("/api/service", (ctx) => {
-  ctx.response.body = "Received a PUT HTTP method";
-});
-
-router.delete("/api/service", (ctx) => {
-  ctx.response.body = "Received a DELETE HTTP method";
+router.post("/api/command", async (ctx) => {
+  const payload: WinRMPayload = {
+    username: ctx.request.url.searchParams.get("username")!,
+    password: ctx.request.url.searchParams.get("password")!,
+    protocol: (ctx.request.url.searchParams.get("protocol")!),
+    hostname: ctx.request.url.searchParams.get("hostname")!,
+    port: Number(ctx.request.url.searchParams.get("port")!),
+  };
+  const req = await ctx.request.body.json();
+  const res = await executeCommand(
+    payload,
+    req.command,
+    req.isPowerShell,
+  );
+  ctx.response.body = res;
 });
 
 const app = new Application();

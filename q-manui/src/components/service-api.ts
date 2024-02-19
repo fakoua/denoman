@@ -4,6 +4,7 @@ import {
   DependenciesModel,
   PerfmonModel,
   ServiceModel,
+  ShellResponse,
   SystemModel,
   WinRMPayload,
 } from './models';
@@ -67,4 +68,14 @@ export async function getSystemInformation(params: WinRMPayload): Promise<System
 export async function getPerfmon(params: WinRMPayload): Promise<PerfmonModel> {
   const res = await api.get('http://localhost:8001/api/perfmon', { params });
   return res.data as PerfmonModel;
+}
+
+export async function execCommand(params: WinRMPayload, command: string, isPowerShell: boolean): Promise<ShellResponse> {
+  const res = await api.post('http://localhost:8001/api/command', { command, isPowerShell }, { params });
+  return res.data as ShellResponse;
+}
+
+export function exitApp() {
+  api.get('http://localhost:8001/api/exit').catch(() => {
+  });
 }
