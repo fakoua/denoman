@@ -44,8 +44,9 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import * as serviceApi from '../components/service-api';
+import { bus } from 'boot/bus';
 
+import * as serviceApi from '../components/service-api';
 import { version } from '../../package.json';
 
 export default defineComponent({
@@ -55,6 +56,7 @@ export default defineComponent({
     async exitApp() {
       this.confirm = false;
       serviceApi.exitApp();
+      bus.emit('app:shutdown');
       this.shutdown = true;
     },
   },

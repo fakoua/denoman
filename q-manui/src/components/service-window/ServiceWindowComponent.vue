@@ -22,6 +22,7 @@
           <q-tab-panel name="general">
             <general-tab-component
               :service="service"
+              :host="host"
               v-on:on-hide-dialog="$emit('onHideDialog')"
               v-on:on-show-dialog="
                 (svr) => {

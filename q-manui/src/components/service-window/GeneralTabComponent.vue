@@ -115,7 +115,7 @@ div.footer {
 import { PropType, defineComponent } from 'vue';
 import { bus } from 'boot/bus';
 
-import { ControlAction, ServiceModel } from '../models';
+import { ControlAction, ServiceModel, WinRMPayload } from '../models';
 
 export default defineComponent({
   name: 'GeneralTabComponent',
@@ -125,11 +125,15 @@ export default defineComponent({
       type: Object as PropType<ServiceModel>,
       required: false,
     },
+    host: {
+      type: Object as PropType<WinRMPayload>,
+      required: true,
+    },
   },
 
   methods: {
     async controlService(action: ControlAction) {
-      bus.emit('controlService', {
+      bus.emit(`${this.host.hostname}:controlService`, {
         action: action,
         name: this.service?.name,
       });

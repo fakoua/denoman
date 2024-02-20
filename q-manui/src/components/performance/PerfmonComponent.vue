@@ -72,6 +72,8 @@
 
 <script lang="ts">
 import { PropType, defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { bus } from 'boot/bus';
+
 import CpuComponent from './CpuComponent.vue';
 import MemoryComponent from './MemoryComponent.vue';
 import DiskComponent from './DiskComponent.vue';
@@ -139,6 +141,12 @@ export default defineComponent({
     onMounted(async () => {
       systemInfo.value = await loadSystem();
       await updateData();
+      bus.on('app:shutdown', () => {
+        if (timeoutId !== -1) {
+          runTimer = false;
+          window.clearTimeout(timeoutId);
+        }
+      });
     });
 
     onUnmounted(() => {

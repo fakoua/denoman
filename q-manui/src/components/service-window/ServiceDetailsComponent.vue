@@ -190,7 +190,7 @@ export default defineComponent({
       this.$emit('onOpenService', this.service);
     },
     async controlService(action: ControlAction) {
-      bus.emit('controlService', {
+      bus.emit(`${this.host.hostname}:controlService`, {
         action: action,
         name: this.service?.name,
       });

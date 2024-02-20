@@ -199,22 +199,21 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props) {
     const doubleClickedService = ref<ServiceModel | undefined>(undefined);
     const selectedService = ref<ServiceModel | undefined>(undefined);
     const isDialogOpen = ref(false);
     const serviceWindow = ref<HTMLDialogElement | null>(null);
 
     onMounted(async () => {
-      bus.on('controlService', async () => {
+      bus.on(`${props.host.hostname}:controlService`, async () => {
         if (isDialogOpen.value) {
-          //(serviceWindow.value as HTMLDialogElement).close();
           if (serviceWindow.value) {
             serviceWindow.value.close();
           }
         }
       });
-      bus.on('serviceChanged', (service) => {
+      bus.on(`${props.host.hostname}:serviceChanged`, (service) => {
         selectedService.value = service;
         if (isDialogOpen.value) {
           doubleClickedService.value = service;

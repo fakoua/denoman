@@ -438,7 +438,7 @@ export default defineComponent({
     },
     controlService(action: ControlAction) {
       if (this.selected && this.selected.length > 0) {
-        bus.emit('controlService', {
+        bus.emit(`${this.host.hostname}:controlService`, {
           action: action,
           name: (this.selected[0] as ServiceModel).name,
         });
@@ -544,7 +544,7 @@ export default defineComponent({
       isLoading.value = false;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      bus.on('controlService', async (action: any) => {
+      bus.on(`${props.host.hostname}:controlService`, async (action: any) => {
         $q.loading.show();
         const res = await serviceApi.controlService(
           props.host,
@@ -552,7 +552,7 @@ export default defineComponent({
           action.name,
         );
         await loadServices();
-        bus.emit('serviceChanged', res);
+        bus.emit(`${props.host.hostname}:serviceChanged`, res);
         if (res) {
           setDisabledControls(res);
         }
