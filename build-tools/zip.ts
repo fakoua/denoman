@@ -1,39 +1,15 @@
+import { compress, decompress } from "https://deno.land/x/zip@v1.2.5/mod.ts";
+
 import { join } from "https://deno.land/std@0.215.0/path/mod.ts";
 
-export const compress = async (
+export const zipCompress = async (
   files: string | string[],
   archiveName = "./archive.zip",
   options?: CompressOptions,
-): Promise<number> => {
-  return await compressProcess(files, archiveName, options);
+): Promise<boolean> => {
+  return await compress(files, archiveName, options);
 };
-
-const compressProcess = async (
-  files: string | string[],
-  archiveName = "./archive.zip",
-  options?: CompressOptions,
-): Promise<number> => {
-  const joinType = Deno.build.os === "windows" ? ", " : " ";
-  const filesList = typeof files === "string" ? files : files.join(joinType);
-
-  const p = new Deno.Command("PowerShell", {
-    args: [
-      "Compress-Archive",
-      "-Path",
-      filesList,
-      "-DestinationPath",
-      archiveName,
-      options?.overwrite ? "-Force" : "",
-    ],
-    stderr: "piped",
-    stdout: "piped",
-  });
-
-  const { code } = await p.spawn().status;
-  return code;
-};
-
-export const decompress = async (
+export const zipDecompress = async (
   filePath: string,
   destinationPath: string | null = "./",
   options?: DecompressOptions,
@@ -51,32 +27,10 @@ export const decompress = async (
     : destinationPath;
 
   // return the unzipped file path or false whene the unzipping Process failed
-  return await decompressProcess(filePath, fullDestinationPath, options) === 0
-    ? fullDestinationPath
-    : false;
+  return await decompress(filePath, fullDestinationPath, options) === false
+    ? false
+    : fullDestinationPath;
 };
-const decompressProcess = async (
-  zipSourcePath: string,
-  destinationPath: string,
-  options?: DecompressOptions,
-): Promise<number> => {
-  const p = new Deno.Command("PowerShell", {
-    args: [
-      "Expand-Archive",
-      "-Path",
-      `"${zipSourcePath}"`,
-      "-DestinationPath",
-      `"${destinationPath}"`,
-      options?.overwrite ? "-Force" : "",
-    ],
-    stderr: "piped",
-    stdout: "piped",
-  });
-
-  const { code } = await p.spawn().status;
-  return code;
-};
-
 interface CompressOptions {
   overwrite?: boolean;
   flags: string[];

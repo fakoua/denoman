@@ -2,7 +2,7 @@ import { join } from "https://deno.land/std@0.215.0/path/mod.ts";
 import { copy } from "https://deno.land/std@0.215.0/fs/copy.ts";
 
 import { bin, version } from "../wwwzip/ui.ts";
-import { decompress } from "./zip.ts";
+import { zipDecompress } from "./zip.ts";
 
 export async function initServer(wwwRoot: string): Promise<boolean> {
   try {
@@ -27,7 +27,7 @@ export async function initServer(wwwRoot: string): Promise<boolean> {
     const zipFile = await tsToZip(wwwRoot);
 
     //Decompress zip file
-    await decompress(zipFile, wwwRoot);
+    await zipDecompress(zipFile, wwwRoot);
     await Deno.remove(zipFile);
 
     const spa = join(wwwRoot, "spa");

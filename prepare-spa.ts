@@ -1,5 +1,5 @@
 import { zipToTs } from "./build-tools/binToTs.ts";
-import { compress } from "./build-tools/zip.ts";
+import { zipCompress } from "./build-tools/zip.ts";
 
 await increaseUiVersion();
 buildQuasar();
@@ -26,7 +26,7 @@ async function increaseUiVersion() {
 
 async function spaToTypeScript() {
   console.log("Compressing [q-manui/dist/spa] ...");
-  await compress("./q-manui/dist/spa", "./q-manui/dist/ui.zip", {
+  await zipCompress("./q-manui/dist/spa", "./q-manui/dist/ui.zip", {
     overwrite: true,
     flags: [],
   });
