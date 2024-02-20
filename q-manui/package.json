@@ -13,7 +13,6 @@
     "build": "quasar build"
   },
   "dependencies": {
-    "@quasar/cli": "^2.3.0",
     "@quasar/extras": "^1.16.4",
     "apexcharts": "3.36.0",
     "axios": "^1.2.1",
@@ -22,8 +21,6 @@
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^3.2.1",
     "quasar": "^2.8.0",
-    "to": "^0.2.9",
-    "update": "^0.7.4",
     "vue": "^3.2.29",
     "vue-router": "^4.0.12",
     "vue3-apexcharts": "1.4.1"

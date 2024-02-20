@@ -57,7 +57,7 @@
 <script lang="ts">
 import { PropType, computed, defineComponent, ref } from 'vue';
 import _fill from 'lodash/fill';
-import 'Humanizer.node';
+import 'humanizer.node';
 
 import { DiskModel } from '../models';
 import { VueApexChartsComponent } from 'vue3-apexcharts';
