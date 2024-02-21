@@ -37,42 +37,32 @@
     >
       <template v-slot:before>
         <q-resize-observer @resize="splitterChanged" :debounce="0" />
-        <q-input
-          ref="commandInput"
-          outlined
-          square
-          autofocus
-          v-model="command"
-          type="textarea"
-          :disable="executing"
-          :loading="executing"
-          :error="errorIndicator"
-          class="terminal-input"
-          resize="none"
-          hide-bottom-space
-        >
-          <q-inner-loading :showing="executing">
-            <q-spinner-gears size="50px" color="primary" />
-          </q-inner-loading>
-        </q-input>
+        <textarea id="code" name="code" ref="commandInput"></textarea>
       </template>
       <template v-slot:after>
         <div class="term" ref="terminalOutputDiv" v-html="terminal"></div>
       </template>
     </q-splitter>
   </div>
+  <div ref="spinner" class="spinner">
+    <q-spinner-cube size="xl" color="white" v-if="executing" />
+  </div>
 </template>
 
-<style lang="css">
-span.cmd {
+<style lang="css" scoped>
+.spinner {
+  position: absolute;
+}
+:deep(.q-splitter__panel.q-splitter__before) {
+  overflow: hidden;
+}
+
+:deep(span.cmd) {
   color: #fffb00;
 }
-textarea {
+:deep(textarea) {
   resize: none !important;
 }
-</style>
-
-<style lang="css" scoped>
 .q-textarea {
   padding: 0;
   margin: 0;
@@ -110,11 +100,20 @@ import { PropType, defineComponent, onMounted, ref, watch } from 'vue';
 
 import * as serviceApi from '../service-api';
 import { ShellResponse, WinRMPayload } from '../models';
-import { QInput } from 'quasar';
+
+type Size = {
+  /**
+   * Layout height
+   */
+  height: number;
+  /**
+   * Layout width
+   */
+  width: number;
+};
 
 export default defineComponent({
   name: 'TerminalComponent',
-
   props: {
     host: {
       type: Object as PropType<WinRMPayload>,
@@ -124,25 +123,24 @@ export default defineComponent({
 
   methods: {
     async executeCommand(selected: boolean) {
-      let userSelection: string | null = '';
+      // @ts-expect-error - Code mirror is not typed
+      this.command = selected ? this.cm.getSelection() : this.cm.getValue();
 
-      if (selected) {
-        if (window.getSelection) {
-          userSelection = window.getSelection()?.toString() ?? null;
-        } else {
-          userSelection = document.getSelection()?.toString() ?? null;
-        }
+      if (this.command === '') {
+        return;
       }
 
-      const cmd = selected && userSelection ? userSelection : this.command;
-
-      if (cmd === 'cls') {
+      if (this.command === 'cls') {
         this.clearTerminal();
         return;
       }
 
       this.executing = true;
-      this.response = await serviceApi.execCommand(this.host, cmd, true);
+      this.response = await serviceApi.execCommand(
+        this.host,
+        this.command,
+        true,
+      );
 
       this.errorIndicator = this.response.exitCode !== 0;
       window.setTimeout(() => {
@@ -161,6 +159,10 @@ export default defineComponent({
     const commandInput = ref(null);
     const terminalOutputDiv = ref(null);
     const terminal = ref('PS DenoMan>');
+    const splitterModel = ref(35);
+    const initialSize = ref<Size>({ height: 0, width: 0 });
+    const spinner = ref(null);
+    const cm = ref<unknown>(null);
 
     watch(response, () => {
       let result = '';
@@ -180,21 +182,29 @@ export default defineComponent({
 
     const setInputFocus = () => {
       window.setTimeout(() => {
-        (commandInput.value! as QInput).focus();
+        //@ts-expect-error - Code mirror is not typed
+        cm.value.focus();
       }, 100);
     };
 
-    const splitterChanged = () => {
+    const splitterChanged = (size: Size) => {
+      if (initialSize.value.height === 0) {
+        initialSize.value = size;
+      }
       const divOutput = terminalOutputDiv.value! as HTMLDivElement;
       const parentOutput = divOutput.parentElement! as HTMLDivElement;
       divOutput.style.height = `${parentOutput.clientHeight}px`;
 
-      const input = commandInput.value! as QInput;
-      const parentInput = input.$el.parentElement! as HTMLElement;
+      if (cm.value) {
+        //@ts-expect-error - Code mirror is not typed
+        cm.value.setSize(size.width, size.height);
+      }
 
-      input.$el.querySelector('textarea')!.style.height =
-        `${parentInput.clientHeight - 4}px`;
-      `${parentInput.clientHeight}px`;
+      if (spinner.value) {
+        const divSpinner = spinner.value as HTMLDivElement;
+        divSpinner.style.top = `${size.height + 72}px`;
+        divSpinner.style.left = `${size.width - 34}px`;
+      }
     };
 
     const clearTerminal = () => {
@@ -203,8 +213,19 @@ export default defineComponent({
 
     onMounted(() => {
       // Focus on the command input. autofocus doesn't work in Quasar
-      setInputFocus();
-      splitterChanged();
+
+      //@ts-expect-error - Code mirror is not typed
+      cm.value = CodeMirror.fromTextArea(document.getElementById('code'), {
+        lineNumbers: true,
+        mode: 'application/x-powershell',
+        theme: 'cobalt',
+      });
+
+      window.setTimeout(() => {
+        splitterModel.value = 35;
+        splitterChanged(initialSize.value);
+        setInputFocus();
+      }, 100);
     });
 
     return {
@@ -213,9 +234,12 @@ export default defineComponent({
       response,
       executing,
       errorIndicator,
-      splitterModel: ref(35),
+      splitterModel,
       terminalOutputDiv,
       terminal,
+      cm,
+      initialSize,
+      spinner,
       clearTerminal,
       splitterChanged,
       setInputFocus,
