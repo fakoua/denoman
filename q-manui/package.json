@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
-    "apexcharts": "3.36.0",
+    "apexcharts": "3.46.0",
     "axios": "^1.2.1",
     "humanizer.node": "^1.0.5",
     "lodash": "^4.17.21",
