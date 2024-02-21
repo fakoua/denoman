@@ -23,7 +23,7 @@
     "quasar": "^2.8.0",
     "vue": "^3.2.29",
     "vue-router": "^4.0.12",
-    "vue3-apexcharts": "1.4.1"
+    "vue3-apexcharts": "1.5.2"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.23.3",
