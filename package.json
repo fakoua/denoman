@@ -1,0 +1,12 @@
+{
+  "name": "denoman",
+  "version": "1.0.0",
+  "description": "A Deno project",
+  "author": "ameh Fakoua <s.fakoua@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-exec": "^3.0.0",
+    "grunt-prompt": "^0.2.0"
+  }
+}

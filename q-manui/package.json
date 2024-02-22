@@ -1,7 +1,7 @@
 {
   "name": "q-manui",
-  "version": "1.1.8",
-  "description": "DenoMan 1.1.8",
+  "version": "1.1.9",
+  "description": "DenoMan 1.1.9",
   "productName": "DenoMan",
   "author": "Sameh Fakoua <s.fakoua@gmail.com>",
   "private": true,
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
-    "apexcharts": "3.36.0",
+    "apexcharts": "3.46.0",
     "axios": "^1.2.1",
     "humanizer.node": "^1.0.5",
     "lodash": "^4.17.21",
@@ -23,7 +23,7 @@
     "quasar": "^2.8.0",
     "vue": "^3.2.29",
     "vue-router": "^4.0.12",
-    "vue3-apexcharts": "1.4.1"
+    "vue3-apexcharts": "1.5.2"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.23.3",

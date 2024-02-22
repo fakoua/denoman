@@ -1,23 +1,31 @@
+import { parseArgs } from "https://deno.land/std@0.216.0/cli/parse_args.ts";
+
 import { zipToTs } from "./build-tools/binToTs.ts";
 import { zipCompress } from "./build-tools/zip.ts";
 
-await increaseUiVersion();
-buildQuasar();
-await spaToTypeScript();
+const flags = parseArgs(Deno.args, {
+  string: ["action", "version"],
+});
 
-function buildQuasar() {
-  const msg = "Please go to [./q-manui] and build the project [quasar build].";
-  alert(msg);
+const action = flags.action;
+console.log("Action:", flags);
+if (action === "set-version") {
+  const version = flags.version || "0.0.1";
+  await increaseUiVersion(version);
+  Deno.exit(0);
 }
 
-async function increaseUiVersion() {
-  const newVersion = prompt("Please enter the new version:");
+if (action === "spa") {
+  await spaToTypeScript();
+  Deno.exit(0);
+}
 
+async function increaseUiVersion(version: string) {
   const packageFile = "./q-manui/package.json";
   let packageJson = await Deno.readTextFile(packageFile);
   const pkg = JSON.parse(packageJson);
-  pkg.version = newVersion;
-  pkg.description = `DenoMan ${newVersion}`;
+  pkg.version = version;
+  pkg.description = `DenoMan ${version}`;
   packageJson = JSON.stringify(pkg, null, 2);
 
   await Deno.writeTextFile(packageFile, packageJson);

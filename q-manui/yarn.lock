@@ -947,6 +947,11 @@
     js-beautify "^1.14.9"
     vue-component-type-helpers "^1.8.21"
 
+"@yr/monotone-cubic-spline@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@yr/monotone-cubic-spline/-/monotone-cubic-spline-1.0.3.tgz#7272d89f8e4f6fb7a1600c28c378cc18d3b577b9"
+  integrity sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==
+
 abbrev@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-2.0.0.tgz#cf59829b8b4f03f89dda2771cb7f3653828c89bf"
@@ -1044,11 +1049,12 @@ anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apexcharts@3.36.0:
-  version "3.36.0"
-  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.36.0.tgz#eba378167be3ebe5044b8980d5907bad9e9a7fff"
-  integrity sha512-9r7M/SOfnYS1g4G1gmRRgeIN1Oj+ct1S0G6PpMPPD3F4jGHgWl5EzxqvoQkk3vpTxN8MbZB5ZHWIAQvPuFiA+w==
+apexcharts@3.46.0:
+  version "3.46.0"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.46.0.tgz#ee0afd44a7df94e038c4cc0160ece21a0da387f5"
+  integrity sha512-ELAY6vj8JQD7QLktKasTzwm9Wt0qxqfQSo+3QWS7G7I774iK8HCkG1toGsqJH0mkK6PtYBtnSIe66uUcwoCw1w==
   dependencies:
+    "@yr/monotone-cubic-spline" "^1.0.3"
     svg.draggable.js "^2.2.2"
     svg.easing.js "^2.0.0"
     svg.filter.js "^2.0.2"
@@ -4157,10 +4163,10 @@ vue-router@^4.0.12:
   dependencies:
     "@vue/devtools-api" "^6.5.0"
 
-vue3-apexcharts@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/vue3-apexcharts/-/vue3-apexcharts-1.4.1.tgz#ea561308430a1c5213b7f17c44ba3c845f6c490d"
-  integrity sha512-96qP8JDqB9vwU7bkG5nVU+E0UGQn7yYQVqUUCLQMYWDuQyu2vE77H/UFZ1yI+hwzlSTBKT9BqnNG8JsFegB3eg==
+vue3-apexcharts@1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/vue3-apexcharts/-/vue3-apexcharts-1.5.2.tgz#fc179d80e34e6f25982dae809c27173d7374db48"
+  integrity sha512-rGbgUJDjtsyjfRF0uzwDjzt8+M7ICSRAbm1N9KCDiczW8BSpbEZuaEsJDJYnJuLFIIVXIGilYzIcjNBf6NbeYA==
 
 vue@^3.2.29:
   version "3.4.19"

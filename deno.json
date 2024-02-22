@@ -5,12 +5,12 @@
   },
 
   "lint": {
-    "exclude": ["q-manui/"]
+    "exclude": ["q-manui/", "Gruntfile.js"]
   },
   "fmt": {
-    "exclude": ["q-manui/"]
+    "exclude": ["q-manui/", "Gruntfile.js"]
   },
   "test": {
-    "exclude": ["q-manui/"]
+    "exclude": ["q-manui/", "Gruntfile.js"]
   }
 }
