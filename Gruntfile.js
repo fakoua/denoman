@@ -24,9 +24,9 @@ module.exports = function (grunt) {
   //Run grunt publish to publish a new version
   //This will prompt for a new version number
   grunt.registerTask("prompt", "Prompt for version", function () {
-    var done = this.async();
+    const done = this.async();
     grunt.log.writeln("Prompting for version");
-    var prompt = require("prompt");
+    const prompt = require("prompt");
     prompt.start();
     prompt.get(["version"], function (err, result) {
       if (err) {
