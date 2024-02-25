@@ -1,24 +1,6 @@
 module.exports = function (grunt) {
-  grunt.loadNpmTasks("grunt-prompt");
   grunt.loadNpmTasks("grunt-exec");
   grunt.initConfig({
-    prompt: {
-      version: {
-        options: {
-          questions: [
-            {
-              config: "version",
-              type: "input",
-              message: "Enter new version number",
-            },
-          ],
-          then: function (results) {
-            grunt.config.set("version", results.version);
-            console.log('Version set to: ' + grunt.config.get("version"))
-          },
-        },
-      },
-    },
     exec: {
       fmt: {
         command: "deno fmt",
@@ -41,8 +23,21 @@ module.exports = function (grunt) {
 
   //Run grunt publish to publish a new version
   //This will prompt for a new version number
+  grunt.registerTask("prompt", "Prompt for version", function () {
+    var done = this.async();
+    grunt.log.writeln("Prompting for version");
+    var prompt = require("prompt");
+    prompt.start();
+    prompt.get(["version"], function (err, result) {
+      if (err) {
+        return done(err);
+      }
+      grunt.config.set("version", result.version);
+      done();
+    });
+  });
   grunt.registerTask("publish", [
-    "prompt:version",
+    "prompt",
     "exec:fmt",
     "exec:lint",
     "exec:setVersion",

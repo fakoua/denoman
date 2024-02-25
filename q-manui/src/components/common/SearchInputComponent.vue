@@ -34,8 +34,6 @@
   </q-input>
 </template>
 
-<style lang="css" scoped></style>
-
 <script lang="ts">
 import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
 
