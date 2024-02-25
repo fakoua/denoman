@@ -64,3 +64,12 @@ export type WinRMPayload = {
   port: number;
   protocol: string;
 };
+
+export type ProcessModel = {
+  processName: string;
+  id: number;
+  cpu: number;
+  ws: number;
+  vm: number;
+  startTime: string;
+};

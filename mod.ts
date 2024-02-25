@@ -1,11 +1,12 @@
-import { join } from "https://deno.land/std@0.215.0/path/join.ts";
-import { exists } from "https://deno.land/std@0.215.0/fs/exists.ts";
-import { ensureDir } from "https://deno.land/std@0.215.0/fs/ensure_dir.ts";
+import { join } from "https://deno.land/std@0.217.0/path/join.ts";
+import { exists } from "https://deno.land/std@0.217.0/fs/exists.ts";
+import { ensureDir } from "https://deno.land/std@0.217.0/fs/ensure_dir.ts";
 
 import { Application, Router } from "https://deno.land/x/oak@v13.2.5/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
+import { getProcesses } from "./src/processes.ts";
 import { getPerfmon, getSystem } from "./src/system.ts";
 import { executeCommand } from "./src/command.ts";
 import * as cache from "./src/memcache.ts";
@@ -39,7 +40,7 @@ router.get("/api/:apiName", async (ctx) => {
   };
 
   if (ctx.params.apiName === "service") {
-    let services: Array<ServiceModel>;
+    let services: ServiceModel[];
     if (cache.has(`${payload.hostname}-services`)) {
       services = cache.get(`${payload.hostname}-services`)!;
     } else {
@@ -71,6 +72,10 @@ router.get("/api/:apiName", async (ctx) => {
     }
 
     ctx.response.body = system;
+  }
+  if (ctx.params.apiName === "process") {
+    const processes = await getProcesses(payload);
+    ctx.response.body = processes;
   }
   if (ctx.params.apiName === "perfmon") {
     const perfmon = await getPerfmon(payload);

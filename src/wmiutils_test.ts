@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.215.0/assert/assert_equals.ts";
+import { assertEquals } from "https://deno.land/std@0.217.0/assert/assert_equals.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
 // Test case 1: Testing with a single match

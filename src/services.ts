@@ -1,5 +1,5 @@
 import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
-import { delay } from "https://deno.land/std@0.215.0/async/delay.ts";
+import { delay } from "https://deno.land/std@0.217.0/async/delay.ts";
 import { DependenciesModel, ServiceModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
@@ -10,7 +10,7 @@ import { getWmiValue } from "./wmiutils.ts";
  */
 export async function getServices(
   payload: WinRMPayload,
-): Promise<Array<ServiceModel>> {
+): Promise<ServiceModel[]> {
   const query =
     "Get-WmiObject win32_service | select AcceptPause, AcceptStop, Caption, DelayedAutoStart, Description, DesktopInteract, DisplayName, ErrorControl, ExitCode, Name, ProcessId, ServiceType, Started, StartMode, StartName, State, Status, PathName, InstallDate | Format-Custom -Depth 1";
   const query_SystemDriver =

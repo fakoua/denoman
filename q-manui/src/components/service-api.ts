@@ -3,6 +3,7 @@ import {
   ControlAction,
   DependenciesModel,
   PerfmonModel,
+  ProcessModel,
   ServiceModel,
   ShellResponse,
   SystemModel,
@@ -68,6 +69,11 @@ export async function getSystemInformation(params: WinRMPayload): Promise<System
 export async function getPerfmon(params: WinRMPayload): Promise<PerfmonModel> {
   const res = await api.get('http://localhost:8001/api/perfmon', { params });
   return res.data as PerfmonModel;
+}
+
+export async function getProcesses(params: WinRMPayload): Promise<ProcessModel[]> {
+  const res = await api.get('http://localhost:8001/api/process', { params });
+  return res.data as ProcessModel[];
 }
 
 export async function execCommand(params: WinRMPayload, command: string, isPowerShell: boolean): Promise<ShellResponse> {

@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "start": "deno run -A mod.ts",
+    "start": "deno run -A --unstable-cron mod.ts",
     "build": "deno fmt && deno lint && deno run -A prepare-spa.ts"
   },
 

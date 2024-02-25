@@ -39,6 +39,8 @@ module.exports = function (grunt) {
     },
   });
 
+  //Run grunt publish to publish a new version
+  //This will prompt for a new version number
   grunt.registerTask("publish", [
     "prompt:version",
     "exec:fmt",

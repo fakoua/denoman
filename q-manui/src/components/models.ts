@@ -102,3 +102,21 @@ export type ShellResponse = {
       message?: string
   }
 };
+
+export type ProcessModel = {
+  processName: string;
+  id: number;
+  cpu: number;
+  ws: number;
+  vm: number;
+  startTime: string;
+};
+
+export type ParentProcessModel =  Omit<ProcessModel, 'id' | 'startTime' | 'vm'> & {
+  children: ProcessModel[];
+};
+
+export type ExpandedRowProps = {
+  expand: boolean;
+  rowIndex: number;
+};

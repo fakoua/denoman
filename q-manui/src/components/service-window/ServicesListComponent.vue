@@ -85,39 +85,7 @@
       </div>
     </template>
     <template v-slot:top-right>
-      <q-input
-        ref="filterInput"
-        borderless
-        dense
-        filled
-        clearable
-        v-model="filter"
-        placeholder="Search Services"
-        style="width: 300px"
-        input-style="width: 100%;"
-        @focus="
-          () => {
-            filterFocused = true;
-          }
-        "
-        @blur="
-          () => {
-            filterFocused = false;
-          }
-        "
-      >
-        <template v-slot:append>
-          <q-chip
-            outline
-            square
-            color="grey-14"
-            text-color="white"
-            label="Ctrl+K"
-            v-if="!filterFocused && !filter"
-          />
-          <q-icon name="search" v-if="filterFocused && !filter" />
-        </template>
-      </q-input>
+      <search-input-component v-model="filter" placeholder="Search Service" />
     </template>
 
     <template v-slot:body="props">
@@ -337,8 +305,14 @@ import {
   ref,
 } from 'vue';
 import DependenciesRowComponent from './DependenciesRowComponent.vue';
+import SearchInputComponent from '../common/SearchInputComponent.vue';
 import * as serviceApi from '../service-api';
-import { ControlAction, ServiceModel, WinRMPayload } from '../models';
+import {
+  ControlAction,
+  ExpandedRowProps,
+  ServiceModel,
+  WinRMPayload,
+} from '../models';
 import { bus } from 'boot/bus';
 import { QTableColumn, useQuasar } from 'quasar';
 
@@ -399,11 +373,6 @@ const columns: QTableColumn[] = [
   },
 ];
 
-type ExpandedRowProps = {
-  expand: boolean;
-  rowIndex: number;
-};
-
 export default defineComponent({
   name: 'ServicesListComponent',
 
@@ -415,6 +384,7 @@ export default defineComponent({
   },
   components: {
     DependenciesRowComponent,
+    SearchInputComponent,
   },
   methods: {
     onSelect(row: ServiceModel) {
@@ -463,8 +433,6 @@ export default defineComponent({
     const showSystemDriver = ref(false);
     const disabledControls = ref<boolean[]>([true, true, true, true, true]);
     const selected = ref([] as ServiceModel[]);
-    const filterInput = ref(null);
-    const filterFocused = ref(false);
     const contextMenu = ref(null);
     const expendedRowProps = ref<ExpandedRowProps>({
       expand: false,
@@ -490,15 +458,6 @@ export default defineComponent({
       );
       disabledControls.value[3] = service.state !== 'Paused';
       disabledControls.value[4] = service.state !== 'Running';
-    };
-
-    const captureCtrlK = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        if (filterInput.value) {
-          (filterInput.value as HTMLElement).focus();
-        }
-      }
     };
 
     const disableStart = computed(() => {
@@ -539,7 +498,6 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      document.addEventListener('keydown', captureCtrlK);
       await loadServices();
       isLoading.value = false;
 
@@ -561,7 +519,6 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      document.removeEventListener('keydown', captureCtrlK);
       bus.off('controlService');
     });
 
@@ -577,8 +534,6 @@ export default defineComponent({
       services,
       showSystemDriver,
       disabledControls,
-      filterInput,
-      filterFocused,
       contextMenu,
       disableStart,
       disableStop,
