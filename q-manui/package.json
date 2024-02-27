@@ -21,7 +21,7 @@
     "pinia": "^2.0.11",
     "pinia-plugin-persistedstate": "^3.2.1",
     "quasar": "^2.8.0",
-    "vue": "^3.2.29",
+    "vue": "^3.4.20",
     "vue-router": "^4.3.0",
     "vue3-apexcharts": "1.5.2"
   },
