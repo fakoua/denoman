@@ -214,7 +214,7 @@ export default defineComponent({
       lst = _take(_sortBy(lst, [1]).reverse(), 5);
 
       lst.forEach((dep) => {
-        dep[0] = services.find((s) => s.name === dep[0])?.displayName || dep[0];
+        dep[0] = services.find((s) => s.name === dep[0])?.displayName ?? dep[0];
       });
       model.value.topDeps = lst;
     };

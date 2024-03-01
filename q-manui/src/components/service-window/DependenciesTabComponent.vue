@@ -130,7 +130,7 @@ export default defineComponent({
         );
 
         return dependsOn.map((v) => {
-          const svr = (services as ServiceModel[]).find(
+          const svr = (services).find(
             (s: ServiceModel) => s.name == v.antecedent,
           );
           return {
@@ -159,7 +159,7 @@ export default defineComponent({
         );
 
         return antecedentsOn.map((v) => {
-          const svr = (services as ServiceModel[]).find(
+          const svr = (services).find(
             (s: ServiceModel) => s.name == v.dependent,
           );
           return {

@@ -51,8 +51,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   name: 'LogonComponent',

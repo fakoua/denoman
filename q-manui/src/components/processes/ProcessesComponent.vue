@@ -195,7 +195,6 @@ export default defineComponent({
     onMounted(async () => {
       isLoading.value = true;
       const response = await serviceApi.getProcesses(props.host);
-      //data.value = response;
 
       data.value = _.chain(response)
         .groupBy('processName')

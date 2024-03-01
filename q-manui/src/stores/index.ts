@@ -23,7 +23,7 @@ declare module 'pinia' {
  * with the Store instance.
  */
 
-export default store((/* { ssrContext } */) => {
+export default store(() => {
   const pinia = createPinia();
   pinia.use(piniaPluginPersistedstate);
 

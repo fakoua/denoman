@@ -1,4 +1,5 @@
 # Logs
+/.scannerwork
 logs
 *.log
 npm-debug.log*

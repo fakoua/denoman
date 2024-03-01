@@ -182,7 +182,7 @@ export default defineComponent({
         );
 
         return dependsOn.map((v) => {
-          const svr = (services as ServiceModel[]).find(
+          const svr = (services).find(
             (s: ServiceModel) => s.name == v.antecedent,
           );
           return {
@@ -209,7 +209,7 @@ export default defineComponent({
         );
 
         return antecedentsOn.map((v) => {
-          const svr = (services as ServiceModel[]).find(
+          const svr = (services).find(
             (s: ServiceModel) => s.name == v.dependent,
           );
           return {
@@ -230,14 +230,14 @@ export default defineComponent({
       if (!props.service) {
         return true;
       }
-      return props.service!.state !== 'Stopped';
+      return props.service.state !== 'Stopped';
     });
 
     const disableStop = computed(() => {
       if (!props.service) {
         return true;
       }
-      return !props.service!.acceptStop;
+      return !props.service.acceptStop;
     });
 
     const disablePause = computed(() => {
@@ -245,7 +245,7 @@ export default defineComponent({
         return true;
       }
       return !(
-        props.service!.state === 'Running' && props.service!.acceptPause
+        props.service.state === 'Running' && props.service.acceptPause
       );
     });
 
@@ -253,14 +253,14 @@ export default defineComponent({
       if (!props.service) {
         return true;
       }
-      return props.service!.state !== 'Paused';
+      return props.service.state !== 'Paused';
     });
 
     const disableRestart = computed(() => {
       if (!props.service) {
         return true;
       }
-      return props.service!.state !== 'Running';
+      return props.service.state !== 'Running';
     });
 
     onMounted(async () => {

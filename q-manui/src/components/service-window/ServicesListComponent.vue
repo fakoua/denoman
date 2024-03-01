@@ -392,7 +392,7 @@ export default defineComponent({
       const service = this.selected[0] as ServiceModel;
 
       this.setDisabledControls(service);
-      this.$emit('onSelectService', row as ServiceModel);
+      this.$emit('onSelectService', row);
     },
     columnStyle(col: QTableColumn) {
       return col.name === 'caption' ? 'min-width: 310px' : '';

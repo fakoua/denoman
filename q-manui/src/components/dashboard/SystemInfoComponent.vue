@@ -58,8 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 import { SystemModel } from '../models';
 
