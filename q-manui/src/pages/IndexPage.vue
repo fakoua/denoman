@@ -74,7 +74,7 @@
                   v-model="hostname"
                   label="Hostname"
                   dense
-                  autocomplete="nofill"
+                  autocomplete="off"
                   lazy-rules
                   autofocus
                   :rules="[(val) => !!val || 'Field is required']"
@@ -83,7 +83,7 @@
                   v-model="username"
                   label="Username"
                   dense
-                  autocomplete="nofill"
+                  autocomplete="off"
                   lazy-rules
                   :rules="[(val) => !!val || 'Field is required']"
                 />
@@ -92,7 +92,7 @@
                   type="password"
                   label="Password"
                   dense
-                  autocomplete="nofill"
+                  autocomplete="off"
                   lazy-rules
                   :rules="[(val) => !!val || 'Field is required']"
                 />
@@ -105,7 +105,7 @@
                       v-model="protocol"
                       dense
                       maxlength="5"
-                      autocomplete="nofill"
+                      autocomplete="off"
                       lazy-rules
                       :rules="[(val) => !!val || '*']"
                       style="width: 40px"
@@ -117,7 +117,7 @@
                         v-model="port"
                         dense
                         type="number"
-                        autocomplete="nofill"
+                        autocomplete="off"
                         lazy-rules
                         :rules="[(val) => !!val || '*']"
                         style="width: 50px"

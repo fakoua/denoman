@@ -1,13 +1,13 @@
 import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
 import { getWmiValue } from "./wmiutils.ts";
 import {
+  DeviceModel,
   DiskModel,
   NetworkModel,
   PerfmonModel,
   SystemModel,
   WinRMPayload,
 } from "./models.ts";
-import { DeviceModel } from "./models.ts";
 
 /**
  * Retrieves system information using WinRM.
