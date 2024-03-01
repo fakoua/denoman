@@ -183,7 +183,6 @@ export default defineComponent({
 
   setup(props) {
     const data = ref<ParentProcessModel[]>([]);
-    const groupedData = ref({} as Record<string, ProcessModel[]>);
     const isLoading = ref(false);
     const filter = ref('');
     const pagination = ref({ sortBy: 'processName', descending: false });
@@ -214,7 +213,6 @@ export default defineComponent({
 
     return {
       data,
-      groupedData,
       isLoading,
       columns,
       filter,

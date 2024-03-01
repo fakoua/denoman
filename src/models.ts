@@ -73,3 +73,12 @@ export type ProcessModel = {
   vm: number;
   startTime: string;
 };
+
+export type DeviceModel = {
+  caption: string;
+  description: string;
+  status: string;
+  manufacturer: string;
+  class: string;
+  id: number;
+};

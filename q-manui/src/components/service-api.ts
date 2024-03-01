@@ -2,6 +2,7 @@ import { api } from 'boot/axios'
 import {
   ControlAction,
   DependenciesModel,
+  DeviceModel,
   PerfmonModel,
   ProcessModel,
   ServiceModel,
@@ -79,6 +80,11 @@ export async function getProcesses(params: WinRMPayload): Promise<ProcessModel[]
 export async function execCommand(params: WinRMPayload, command: string, isPowerShell: boolean): Promise<ShellResponse> {
   const res = await api.post('http://localhost:8001/api/command', { command, isPowerShell }, { params });
   return res.data as ShellResponse;
+}
+
+export async function getDevices(params: WinRMPayload): Promise<DeviceModel[]> {
+  const res = await api.get('http://localhost:8001/api/device', { params });
+  return res.data as DeviceModel[];
 }
 
 export function exitApp() {

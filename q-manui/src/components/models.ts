@@ -1,12 +1,6 @@
-export interface Todo {
-  id: number;
-  content: string;
-}
-
-export interface Meta {
-  totalCount: number;
-}
-
+/**
+ * Represents a service model.
+ */
 export interface ServiceModel {
   acceptPause: boolean;
   acceptStop: boolean;
@@ -29,6 +23,9 @@ export interface ServiceModel {
   isSystemDriver: boolean;
 }
 
+/**
+ * Represents a system model.
+ */
 export type SystemModel = {
   caption: string;
   csName: string;
@@ -37,11 +34,17 @@ export type SystemModel = {
   processorName: string;
 };
 
+/**
+ * Represents dependencies between services.
+ */
 export type DependenciesModel = {
   antecedent: string;
   dependent: string;
 };
 
+/**
+ * Represents a tree node with dependencies.
+ */
 export type TreeNodeDeps = {
   caption: string;
   name: string;
@@ -50,8 +53,14 @@ export type TreeNodeDeps = {
   state: string;
 };
 
+/**
+ * Represents a control action for a service.
+ */
 export type ControlAction = 'Start' | 'Stop' | 'Suspend' | 'Resume' | 'Restart';
 
+/**
+ * Represents the payload for a WinRM connection.
+ */
 export type WinRMPayload = {
   username: string;
   password: string;
@@ -60,6 +69,9 @@ export type WinRMPayload = {
   protocol: string;
 };
 
+/**
+ * Represents the status of services.
+ */
 export type ServiceStatusModel = {
   running?: number;
   stopped?: number;
@@ -68,6 +80,9 @@ export type ServiceStatusModel = {
   total?: number;
 };
 
+/**
+ * Represents disk information.
+ */
 export type DiskModel = {
   name: string;
   diskReadBytesPersec: number;
@@ -75,6 +90,9 @@ export type DiskModel = {
   percentDiskTime: number;
 };
 
+/**
+ * Represents network information.
+ */
 export type NetworkModel = {
   name: string;
   bytesReceivedPersec: number;
@@ -82,6 +100,9 @@ export type NetworkModel = {
   bytesTotalPersec: number;
 };
 
+/**
+ * Represents performance monitor information.
+ */
 export type PerfmonModel = {
   cpu: number;
   memory: {
@@ -92,6 +113,9 @@ export type PerfmonModel = {
   networks: NetworkModel;
 };
 
+/**
+ * Represents the response from a shell command execution.
+ */
 export type ShellResponse = {
   stdout: string,
   stderr: string,
@@ -103,6 +127,9 @@ export type ShellResponse = {
   }
 };
 
+/**
+ * Represents a process information.
+ */
 export type ProcessModel = {
   processName: string;
   id: number;
@@ -112,11 +139,34 @@ export type ProcessModel = {
   startTime: string;
 };
 
+/**
+ * Represents a parent process with its children processes.
+ */
 export type ParentProcessModel =  Omit<ProcessModel, 'id' | 'startTime' | 'vm'> & {
   children: ProcessModel[];
 };
 
+/**
+ * Represents props for an expanded row.
+ */
 export type ExpandedRowProps = {
   expand: boolean;
   rowIndex: number;
 };
+
+export type DeviceModel = {
+  caption: string;
+  description: string;
+  status: string;
+  manufacturer: string;
+  class: string;
+  id: number;
+}
+
+export type TreeModel = {
+  label : string,
+  icon: string,
+  id: string,
+  color: string,
+  children?: TreeModel[],
+ }

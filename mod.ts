@@ -7,7 +7,7 @@ import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getProcesses } from "./src/processes.ts";
-import { getPerfmon, getSystem } from "./src/system.ts";
+import { getDevices, getPerfmon, getSystem } from "./src/system.ts";
 import { executeCommand } from "./src/command.ts";
 import * as cache from "./src/memcache.ts";
 import {
@@ -80,6 +80,10 @@ router.get("/api/:apiName", async (ctx) => {
   if (ctx.params.apiName === "perfmon") {
     const perfmon = await getPerfmon(payload);
     ctx.response.body = perfmon;
+  }
+  if (ctx.params.apiName === "device") {
+    const devices = await getDevices(payload);
+    ctx.response.body = devices;
   }
 });
 

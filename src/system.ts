@@ -7,6 +7,7 @@ import {
   SystemModel,
   WinRMPayload,
 } from "./models.ts";
+import { DeviceModel } from "./models.ts";
 
 /**
  * Retrieves system information using WinRM.
@@ -79,6 +80,27 @@ export async function getPerfmon(payload: WinRMPayload): Promise<PerfmonModel> {
     disks: disks,
     networks: network,
   };
+}
+
+export async function getDevices(
+  payload: WinRMPayload,
+): Promise<DeviceModel[]> {
+  const query =
+    `Get-PnpDevice | Select-Object -Property Caption, Description, Status, Manufacturer, Class, Problem | Format-Custom`;
+  const context = new winrm.WinRMContext(
+    { username: payload.username, password: payload.password },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
+  );
+  const res = await context.runPowerShell(query);
+  if (res.exitCode !== 0) {
+    console.log(res);
+    return [];
+  }
+  return processWmiDevice(res.stdout);
 }
 
 async function getProcessorName(payload: WinRMPayload): Promise<string> {
@@ -224,5 +246,31 @@ function process_Disk_Wmi(wmi: string): DiskModel[] {
       percentDiskTime: parseInt(PercentDiskTime),
     });
   }
+  return rtnVal;
+}
+
+function processWmiDevice(wmi: string): DeviceModel[] {
+  wmi = wmi.replaceAll("\\", "|");
+  wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const matches = wmi.matchAll(regex);
+  const rtnVal: DeviceModel[] = [];
+
+  let idCounter = 1;
+  for (const match of matches) {
+    const mt = `  ${match[1]}`;
+    //I'm using parseInt and parseFloat to convert the values to the correct type (unknown at compile time)
+    const cls: string = getWmiValue<string>("Class", "Problem", mt);
+    const process: DeviceModel = {
+      caption: getWmiValue<string>("Caption", "Description", mt),
+      description: getWmiValue<string>("Description", "Status", mt),
+      status: getWmiValue<string>("Status", "Manufacturer", mt),
+      manufacturer: getWmiValue<string>("Manufacturer", "Class", mt),
+      class: cls === "" ? "Other devices" : cls,
+      id: idCounter++,
+    };
+    rtnVal.push(process);
+  }
+
   return rtnVal;
 }
