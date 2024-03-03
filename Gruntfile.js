@@ -8,6 +8,12 @@ module.exports = function (grunt) {
       lint: {
         command: "deno lint",
       },
+      deno_test: {
+        command: "deno test --coverage=cov_profile",
+      },
+      deno_lcov: {
+        command: "deno coverage cov_profile --lcov --output=cov_profile.lcov",
+      },
       setVersion: {
         command: 'deno run -A prepare-spa.ts --action set-version --version <%= grunt.config.get("version") %>',
       },
@@ -48,6 +54,8 @@ module.exports = function (grunt) {
     "prompt",
     "exec:fmt",
     "exec:lint",
+    "exec:deno_test",
+    "exec:deno_lcov",
     "exec:setVersion",
     "exec:testQuasar",
     "exec:buildQuasar",

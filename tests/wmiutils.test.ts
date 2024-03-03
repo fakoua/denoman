@@ -1,5 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.217.0/assert/assert_equals.ts";
-import { getWmiValue } from "./wmiutils.ts";
+import { assertEquals } from "https://deno.land/std@0.218.2/assert/assert_equals.ts";
+import { getWmiValue } from "../src/wmiutils.ts";
 
 // Test case 1: Testing with a single match
 Deno.test("getWmiValue should return the correct value when there is a single match", () => {

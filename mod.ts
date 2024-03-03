@@ -1,8 +1,8 @@
-import { join } from "https://deno.land/std@0.217.0/path/join.ts";
-import { exists } from "https://deno.land/std@0.217.0/fs/exists.ts";
-import { ensureDir } from "https://deno.land/std@0.217.0/fs/ensure_dir.ts";
+import { join } from "https://deno.land/std@0.218.2/path/join.ts";
+import { exists } from "https://deno.land/std@0.218.2/fs/exists.ts";
+import { ensureDir } from "https://deno.land/std@0.218.2/fs/ensure_dir.ts";
 
-import { Application, Router } from "https://deno.land/x/oak@v13.2.5/mod.ts";
+import { Application, Router } from "https://deno.land/x/oak@v14.1.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
@@ -31,13 +31,7 @@ router.get("/api/exit", (ctx) => {
 });
 
 router.get("/api/:apiName", async (ctx) => {
-  const payload: WinRMPayload = {
-    username: ctx.request.url.searchParams.get("username")!,
-    password: ctx.request.url.searchParams.get("password")!,
-    protocol: (ctx.request.url.searchParams.get("protocol")!),
-    hostname: ctx.request.url.searchParams.get("hostname")!,
-    port: Number(ctx.request.url.searchParams.get("port")!),
-  };
+  const payload: WinRMPayload = getPayload(ctx.request.url.searchParams);
 
   if (ctx.params.apiName === "service") {
     let services: ServiceModel[];
@@ -88,13 +82,7 @@ router.get("/api/:apiName", async (ctx) => {
 });
 
 router.post("/api/service", async (ctx) => {
-  const payload: WinRMPayload = {
-    username: ctx.request.url.searchParams.get("username")!,
-    password: ctx.request.url.searchParams.get("password")!,
-    protocol: (ctx.request.url.searchParams.get("protocol")!),
-    hostname: ctx.request.url.searchParams.get("hostname")!,
-    port: Number(ctx.request.url.searchParams.get("port")!),
-  };
+  const payload: WinRMPayload = getPayload(ctx.request.url.searchParams);
 
   const req = await ctx.request.body.json();
   const service = await actions(req.serviceName, req.action, payload);
@@ -120,13 +108,7 @@ router.post("/api/service", async (ctx) => {
 });
 
 router.post("/api/command", async (ctx) => {
-  const payload: WinRMPayload = {
-    username: ctx.request.url.searchParams.get("username")!,
-    password: ctx.request.url.searchParams.get("password")!,
-    protocol: (ctx.request.url.searchParams.get("protocol")!),
-    hostname: ctx.request.url.searchParams.get("hostname")!,
-    port: Number(ctx.request.url.searchParams.get("port")!),
-  };
+  const payload: WinRMPayload = getPayload(ctx.request.url.searchParams);
   const req = await ctx.request.body.json();
   const res = await executeCommand(
     payload,
@@ -160,6 +142,16 @@ app.use(async (context, next) => {
 console.log("Listening to http://localhost:8001");
 
 await app.listen({ port: 8001 });
+
+function getPayload(searchParams: URLSearchParams): WinRMPayload {
+  return {
+    username: searchParams.get("username")!,
+    password: searchParams.get("password")!,
+    protocol: searchParams.get("protocol")!,
+    hostname: searchParams.get("hostname")!,
+    port: Number(searchParams.get("port")!),
+  };
+}
 
 async function getWwwRoot(): Promise<string> {
   const wwwRoot = join(getDenoDir(), "denoman/wwwroot");

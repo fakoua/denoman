@@ -1,5 +1,5 @@
-import { join } from "https://deno.land/std@0.217.0/path/mod.ts";
-import { copy } from "https://deno.land/std@0.217.0/fs/copy.ts";
+import { join } from "https://deno.land/std@0.218.2/path/mod.ts";
+import { copy } from "https://deno.land/std@0.218.2/fs/copy.ts";
 
 import { bin, version } from "../wwwzip/ui.ts";
 import { zipDecompress } from "./zip.ts";

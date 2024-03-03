@@ -11,7 +11,7 @@
       separator="none"
       wrap-cells
       :rows-per-page-options="[0]"
-      card-class="bg-blue-6 text-white"
+      card-class="bg-grey-2 text-black"
     >
       <template v-slot:body="props">
         <q-tr :props="props">
@@ -28,15 +28,7 @@
 import { PropType, defineComponent } from 'vue';
 import { ProcessModel } from '../models';
 import { QTableColumn } from 'quasar';
-
-const cpuFormatter = (d: number) => {
-  const hours = Math.floor(d / 3600);
-  const minutes = Math.floor((d % 3600) / 60);
-  const seconds = Math.floor((d % 3600) % 60);
-
-  const formattedTime = `${hours.toString()}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  return formattedTime;
-};
+import { cpuFormatter } from 'src/utils';
 
 const columns: QTableColumn[] = [
   {

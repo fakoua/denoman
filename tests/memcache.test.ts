@@ -1,5 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.214.0/assert/assert_equals.ts";
-import { get, has, put } from "./memcache.ts";
+import { assertEquals } from "https://deno.land/std@0.218.2/assert/assert_equals.ts";
+import { get, has, put } from "../src/memcache.ts";
 
 // Mock window object
 // deno-lint-ignore no-explicit-any
