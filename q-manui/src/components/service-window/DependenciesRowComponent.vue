@@ -182,7 +182,7 @@ export default defineComponent({
         );
 
         return dependsOn.map((v) => {
-          const svr = (services).find(
+          const svr = services.find(
             (s: ServiceModel) => s.name == v.antecedent,
           );
           return {
@@ -209,9 +209,7 @@ export default defineComponent({
         );
 
         return antecedentsOn.map((v) => {
-          const svr = (services).find(
-            (s: ServiceModel) => s.name == v.dependent,
-          );
+          const svr = services.find((s: ServiceModel) => s.name == v.dependent);
           return {
             caption: svr?.caption,
             name: v.dependent,
@@ -244,9 +242,7 @@ export default defineComponent({
       if (!props.service) {
         return true;
       }
-      return !(
-        props.service.state === 'Running' && props.service.acceptPause
-      );
+      return !(props.service.state === 'Running' && props.service.acceptPause);
     });
 
     const disableResume = computed(() => {

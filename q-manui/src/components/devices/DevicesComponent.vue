@@ -172,9 +172,6 @@ export default defineComponent({
       data.value = await serviceApi.getDevices(props.host);
       const res = _orderBy(data.value, ['class', 'caption'], ['asc', 'asc']);
 
-      const sam = data.value.filter((d) => d.status !== 'OK');
-      console.log(sam);
-
       const grouped = _groupBy(res, 'class');
       for (const key in grouped) {
         const hasError =

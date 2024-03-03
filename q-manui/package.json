@@ -1,16 +1,20 @@
 {
   "name": "q-manui",
-  "version": "1.2.1",
-  "description": "DenoMan 1.2.1",
+  "version": "1.3.0",
+  "description": "DenoMan 1.3.0",
   "productName": "DenoMan",
   "author": "Sameh Fakoua <s.fakoua@gmail.com>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,css,html,md,json}\" --ignore-path .gitignore",
-    "test": "vitest",
+    "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build"
+    "build": "quasar build",
+    "test:unit:ui": "vitest --ui",
+    "test:unit": "vitest",
+    "test:unit:ci": "vitest run",
+    "cov": "vitest run --coverage"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.9",
@@ -28,19 +32,23 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.23.3",
     "@quasar/app-vite": "^1.7.3",
+    "@quasar/quasar-app-extension-testing-unit-vitest": "^0.4.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.22",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
-    "@vue/test-utils": "^2.4.4",
+    "@vitest/coverage-v8": "^1.3.1",
+    "@vitest/ui": "^1.3.1",
+    "@vue/test-utils": "^2.4.1",
     "autoprefixer": "^10.4.17",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.22.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3",
-    "vitest": "^1.3.1"
+    "vitest": "^1.3.1",
+    "@pinia/testing": "^0.1.3"
   },
   "engines": {
     "node": "^20 || ^18 || ^16",

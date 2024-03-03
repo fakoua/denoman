@@ -70,7 +70,6 @@ export default defineComponent({
   setup() {
     return {
       tab: ref('general'),
-      text: ref('asdfasdf'),
     };
   },
 });

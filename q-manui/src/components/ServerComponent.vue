@@ -237,7 +237,7 @@ export default defineComponent({
       selectedService: selectedService,
       doubleClickedService,
       splitterModel: ref(15),
-      services: ref<Array<ServiceModel>>([]),
+      services: ref<ServiceModel[]>([]),
       isDialogOpen: isDialogOpen,
       serviceWindow,
       tab: ref('dashboard'),

@@ -183,7 +183,7 @@ export default defineComponent({
 
   setup(props) {
     const data = ref<ParentProcessModel[]>([]);
-    const isLoading = ref(false);
+    const isLoading = ref(true);
     const filter = ref('');
     const pagination = ref({ sortBy: 'processName', descending: false });
     const selected = ref([] as ProcessModel[]);
@@ -193,9 +193,7 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      isLoading.value = true;
       const response = await serviceApi.getProcesses(props.host);
-
       data.value = _.chain(response)
         .groupBy('processName')
         .map((value, key) => {

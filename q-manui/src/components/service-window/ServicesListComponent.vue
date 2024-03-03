@@ -231,7 +231,12 @@
           {{ col.value }}
         </q-td>
       </q-tr>
-      <q-tr v-if="props.expand" v-show="props.expand" :props="props">
+      <q-tr
+        v-if="props.expand"
+        v-show="props.expand"
+        :props="props"
+        :key="props.row.caption"
+      >
         <q-td colspan="100%" style="padding-left: 6px; background-color: white">
           <div class="text-left">
             <dependencies-row-component

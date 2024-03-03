@@ -200,7 +200,7 @@ export default defineComponent({
 
     const processDependencies = (
       services: ServiceModel[],
-      dependencies: DependenciesModel[]
+      dependencies: DependenciesModel[],
     ) => {
       const grp = _groupBy(dependencies, (s) => {
         return s.antecedent;
@@ -243,13 +243,10 @@ export default defineComponent({
       }
 
       model.value.system = await loadSystem();
-
       const deps = await loadDependencies();
-
       if (deps && services) {
         processDependencies(services, deps);
       }
-
       isLoading.value = false;
     });
 
