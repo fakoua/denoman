@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { formatBytesPerSec, getChartOptions } from '../../../../../src/components/performance/common';
+import { formatBytesPerSec, getChartOptions } from 'src/components/performance/common';
 
 test('getChartOptions - yaxis.max is 100', () => {
   const obj = getChartOptions();

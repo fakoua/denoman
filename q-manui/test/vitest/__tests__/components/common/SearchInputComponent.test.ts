@@ -2,7 +2,7 @@ import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-v
 import { mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it } from 'vitest';
-import SearchInputComponent from '../../../../../src/components/common/SearchInputComponent.vue'
+import SearchInputComponent from 'src/components/common/SearchInputComponent.vue'
 
 installQuasarPlugin({ plugins: { Notify } });
 

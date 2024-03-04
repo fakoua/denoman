@@ -369,13 +369,6 @@ const columns: QTableColumn[] = [
       return val.replaceAll('|', '\\');
     },
   },
-  {
-    name: 'description',
-    label: 'Description',
-    field: 'description',
-    sortable: true,
-    align: 'left',
-  },
 ];
 
 export default defineComponent({

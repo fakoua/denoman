@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it } from 'vitest';
 
-import DeviceDetailsComponent from '../../../../../src/components/devices/DeviceDetailsComponent.vue';
+import DeviceDetailsComponent from 'src/components/devices/DeviceDetailsComponent.vue';
 
 installQuasarPlugin({ plugins: { Notify } });
 

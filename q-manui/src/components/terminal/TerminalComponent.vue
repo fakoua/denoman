@@ -31,7 +31,7 @@
     <q-splitter
       v-model="splitterModel"
       horizontal
-      style="height: calc(100vh - 200px)"
+      style="height: calc(100vh - 150px)"
       separator-class="bg-primary"
       separator-style="height: 3px"
     >

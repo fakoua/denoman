@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import ServiceDetailsComponent from '../../../../../src/components/service-window/ServiceDetailsComponent.vue';
+import ServiceDetailsComponent from 'src/components/service-window/ServiceDetailsComponent.vue';
 import { ServiceModel, SystemModel } from 'src/components/models';
 import { nextTick } from 'vue';
 

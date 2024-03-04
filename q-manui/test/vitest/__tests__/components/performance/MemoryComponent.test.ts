@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it } from 'vitest';
 
-import MemoryComponent from '../../../../../src/components/performance/MemoryComponent.vue';
+import MemoryComponent from 'src/components/performance/MemoryComponent.vue';
 import { PerfmonModel, SystemModel } from 'src/components/models';
 import { nextTick } from 'vue';
 

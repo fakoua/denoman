@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import ProcessesComponent from '../../../../../src/components/processes/ProcessesComponent.vue';
+import ProcessesComponent from 'src/components/processes/ProcessesComponent.vue';
 import { nextTick } from 'vue';
 import { ProcessModel } from 'src/components/models';
 

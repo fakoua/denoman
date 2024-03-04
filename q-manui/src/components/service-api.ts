@@ -8,6 +8,8 @@ import {
   ServiceModel,
   ShellResponse,
   SystemModel,
+  UserModel,
+  GroupModel,
   WinRMPayload,
 } from './models';
 
@@ -132,6 +134,28 @@ export async function execCommand(params: WinRMPayload, command: string, isPower
 export async function getDevices(params: WinRMPayload): Promise<DeviceModel[]> {
   const res = await api.get('http://localhost:8001/api/device', { params });
   return res.data as DeviceModel[];
+}
+
+/**
+ * Retrieves a list of users from the API.
+ *
+ * @param params - The parameters for the API request.
+ * @returns A promise that resolves to an array of UserModel objects.
+ */
+export async function getUsers(params: WinRMPayload): Promise<UserModel[]> {
+  const res = await api.get('http://localhost:8001/api/users', { params });
+  return res.data as UserModel[];
+}
+
+/**
+ * Retrieves groups using the specified parameters.
+ *
+ * @param params - The parameters for the WinRMPayload.
+ * @returns A promise that resolves to an array of GroupModel objects.
+ */
+export async function getGroups(params: WinRMPayload): Promise<GroupModel[]> {
+  const res = await api.get('http://localhost:8001/api/groups', { params });
+  return res.data as GroupModel[];
 }
 
 /**

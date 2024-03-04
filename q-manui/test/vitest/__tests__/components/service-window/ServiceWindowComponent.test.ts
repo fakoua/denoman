@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it} from 'vitest';
 
-import ServiceWindowComponent from '../../../../../src/components/service-window/ServiceWindowComponent.vue';
+import ServiceWindowComponent from 'src/components/service-window/ServiceWindowComponent.vue';
 
 installQuasarPlugin({ plugins: { Notify } });
 

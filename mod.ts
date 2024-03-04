@@ -2,21 +2,43 @@ import { join } from "https://deno.land/std@0.218.2/path/join.ts";
 import { exists } from "https://deno.land/std@0.218.2/fs/exists.ts";
 import { ensureDir } from "https://deno.land/std@0.218.2/fs/ensure_dir.ts";
 
-import { Application, Router } from "https://deno.land/x/oak@v14.1.1/mod.ts";
+import {
+  Application,
+  Router,
+  RouterContext,
+} from "https://deno.land/x/oak@v14.1.1/mod.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getProcesses } from "./src/processes.ts";
-import { getDevices, getPerfmon, getSystem } from "./src/system.ts";
+import {
+  getDevices,
+  getGroups,
+  getPerfmon,
+  getSystem,
+  getUsers,
+} from "./src/system.ts";
 import { executeCommand } from "./src/command.ts";
 import * as cache from "./src/memcache.ts";
 import {
   DependenciesModel,
+  GroupModel,
   ServiceModel,
   SystemModel,
+  UserModel,
   WinRMPayload,
 } from "./src/models.ts";
 import { initServer } from "./build-tools/binToTs.ts";
+
+type ContextApiName = RouterContext<
+  "/api/:apiName",
+  {
+    apiName: string;
+  } & Record<string | number, string | undefined>,
+  // NOSONAR
+  // deno-lint-ignore no-explicit-any
+  Record<string, any>
+>;
 
 await initServer(await getWwwRoot());
 
@@ -33,51 +55,33 @@ router.get("/api/exit", (ctx) => {
 router.get("/api/:apiName", async (ctx) => {
   const payload: WinRMPayload = getPayload(ctx.request.url.searchParams);
 
-  if (ctx.params.apiName === "service") {
-    let services: ServiceModel[];
-    if (cache.has(`${payload.hostname}-services`)) {
-      services = cache.get(`${payload.hostname}-services`)!;
-    } else {
-      services = await getServices(payload);
-      cache.put(`${payload.hostname}-services`, services);
-    }
-    ctx.response.body = services;
-  }
-
-  if (ctx.params.apiName === "dependencies") {
-    let deps: Array<DependenciesModel>;
-    if (cache.has(`${payload.hostname}-dependencies`)) {
-      deps = cache.get(`${payload.hostname}-dependencies`)!;
-    } else {
-      deps = await getDependsServices(payload);
-      cache.put(`${payload.hostname}-dependencies`, deps);
-    }
-    ctx.response.body = deps;
-  }
-
-  if (ctx.params.apiName === "system") {
-    let system: SystemModel;
-
-    if (cache.has(`${payload.hostname}-system-info`)) {
-      system = cache.get(`${payload.hostname}-system-info`)!;
-    } else {
-      system = await getSystem(payload);
-      cache.put(`${payload.hostname}-system-info`, system);
-    }
-
-    ctx.response.body = system;
-  }
-  if (ctx.params.apiName === "process") {
-    const processes = await getProcesses(payload);
-    ctx.response.body = processes;
-  }
-  if (ctx.params.apiName === "perfmon") {
-    const perfmon = await getPerfmon(payload);
-    ctx.response.body = perfmon;
-  }
-  if (ctx.params.apiName === "device") {
-    const devices = await getDevices(payload);
-    ctx.response.body = devices;
+  switch (ctx.params.apiName) {
+    case "service":
+      await handleService(ctx, payload);
+      break;
+    case "dependencies":
+      await handleDependencies(ctx, payload);
+      break;
+    case "system":
+      await handleSystem(ctx, payload);
+      break;
+    case "process":
+      await handleProcess(ctx, payload);
+      break;
+    case "perfmon":
+      await handlePerfmon(ctx, payload);
+      break;
+    case "device":
+      await handleDevice(ctx, payload);
+      break;
+    case "users":
+      await handleUsers(ctx, payload);
+      break;
+    case "groups":
+      await handleGroups(ctx, payload);
+      break;
+    default:
+      ctx.throw(404, "API not found");
   }
 });
 
@@ -142,6 +146,76 @@ app.use(async (context, next) => {
 console.log("Listening to http://localhost:8001");
 
 await app.listen({ port: 8001 });
+
+async function handleService(ctx: ContextApiName, payload: WinRMPayload) {
+  let services: ServiceModel[];
+  if (cache.has(`${payload.hostname}-services`)) {
+    services = cache.get(`${payload.hostname}-services`)!;
+  } else {
+    services = await getServices(payload);
+    cache.put(`${payload.hostname}-services`, services);
+  }
+  ctx.response.body = services;
+}
+
+async function handleDependencies(ctx: ContextApiName, payload: WinRMPayload) {
+  let deps: Array<DependenciesModel>;
+  if (cache.has(`${payload.hostname}-dependencies`)) {
+    deps = cache.get(`${payload.hostname}-dependencies`)!;
+  } else {
+    deps = await getDependsServices(payload);
+    cache.put(`${payload.hostname}-dependencies`, deps);
+  }
+  ctx.response.body = deps;
+}
+
+async function handleSystem(ctx: ContextApiName, payload: WinRMPayload) {
+  let system: SystemModel;
+  if (cache.has(`${payload.hostname}-system-info`)) {
+    system = cache.get(`${payload.hostname}-system-info`)!;
+  } else {
+    system = await getSystem(payload);
+    cache.put(`${payload.hostname}-system-info`, system);
+  }
+  ctx.response.body = system;
+}
+
+async function handleProcess(ctx: ContextApiName, payload: WinRMPayload) {
+  const processes = await getProcesses(payload);
+  ctx.response.body = processes;
+}
+
+async function handlePerfmon(ctx: ContextApiName, payload: WinRMPayload) {
+  const perfmon = await getPerfmon(payload);
+  ctx.response.body = perfmon;
+}
+
+async function handleDevice(ctx: ContextApiName, payload: WinRMPayload) {
+  const devices = await getDevices(payload);
+  ctx.response.body = devices;
+}
+
+async function handleUsers(ctx: ContextApiName, payload: WinRMPayload) {
+  let users: UserModel[];
+  if (cache.has(`${payload.hostname}-users`)) {
+    users = cache.get(`${payload.hostname}-users`)!;
+  } else {
+    users = await getUsers(payload);
+    cache.put(`${payload.hostname}-users`, users);
+  }
+  ctx.response.body = users;
+}
+
+async function handleGroups(ctx: ContextApiName, payload: WinRMPayload) {
+  let groups: GroupModel[];
+  if (cache.has(`${payload.hostname}-groups`)) {
+    groups = cache.get(`${payload.hostname}-groups`)!;
+  } else {
+    groups = await getGroups(payload);
+    cache.put(`${payload.hostname}-groups`, groups);
+  }
+  ctx.response.body = groups;
+}
 
 function getPayload(searchParams: URLSearchParams): WinRMPayload {
   return {

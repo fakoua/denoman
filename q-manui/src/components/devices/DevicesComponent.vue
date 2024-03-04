@@ -47,13 +47,12 @@
   </div>
   <div
     v-if="!isLoading"
-    class="q-pa-md q-gutter-sm"
+    class="q-gutter-sm"
     style="height: calc(100vh - 100px)"
   >
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
-        <div class="text-caption text-weight-bold">Device Manager</div>
-        <div class="q-pa-md tree-container">
+        <div class="tree-container">
           <q-input ref="filterRef" filled v-model="filter" label="Filter" dense>
             <template v-slot:append>
               <q-icon
@@ -118,6 +117,8 @@
   max-height: calc(100vh - 156px);
   min-height: calc(100vh - 156px);
   overflow-y: auto;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 </style>
 

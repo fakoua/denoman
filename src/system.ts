@@ -3,9 +3,12 @@ import { getWmiValue } from "./wmiutils.ts";
 import {
   DeviceModel,
   DiskModel,
+  GroupModel,
   NetworkModel,
   PerfmonModel,
   SystemModel,
+  UserGroups,
+  UserModel,
   WinRMPayload,
 } from "./models.ts";
 
@@ -34,6 +37,11 @@ export async function getSystem(payload: WinRMPayload): Promise<SystemModel> {
   return info;
 }
 
+/**
+ * Retrieves performance monitoring data for the specified WinRM payload.
+ * @param payload The WinRM payload containing the necessary credentials and connection details.
+ * @returns A Promise that resolves to a PerfmonModel object containing the performance data.
+ */
 export async function getPerfmon(payload: WinRMPayload): Promise<PerfmonModel> {
   const query =
     "Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average | Select Average, Count | Format-Custom";
@@ -82,6 +90,12 @@ export async function getPerfmon(payload: WinRMPayload): Promise<PerfmonModel> {
   };
 }
 
+/**
+ * Retrieves a list of devices using WinRM.
+ *
+ * @param payload - The WinRM payload containing the necessary credentials and connection details.
+ * @returns A promise that resolves to an array of DeviceModel objects representing the devices.
+ */
 export async function getDevices(
   payload: WinRMPayload,
 ): Promise<DeviceModel[]> {
@@ -101,6 +115,131 @@ export async function getDevices(
     return [];
   }
   return processWmiDevice(res.stdout);
+}
+
+/**
+ * Retrieves a list of user models from the WinRM server.
+ * @param payload - The WinRMPayload object containing the necessary information for authentication and connection.
+ * @returns A Promise that resolves to an array of UserModel objects.
+ */
+export async function getUsers(payload: WinRMPayload): Promise<UserModel[]> {
+  const query =
+    `Get-LocalUser | Select-Object -Property Description, Enabled, FullName, UserMayChangePassword, PasswordRequired, Name, @{Name="PasswordChangeableDate";Expression={$_.PasswordChangeableDate.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="PasswordLastSet";Expression={$_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="LastLogon";Expression={$_.LastLogon.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="PasswordExpires";Expression={$_.PasswordExpires.ToString("yyyy-MM-dd HH:mm:ss")}}, PrincipalSource | Format-Custom`;
+  const context = new winrm.WinRMContext(
+    { username: payload.username, password: payload.password },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
+  );
+  const res = await context.runPowerShell(query);
+  if (res.exitCode !== 0) {
+    return [];
+  }
+  const users = processWmiUser(res.stdout);
+
+  const userGroups = await getUsersAndGroups(payload);
+
+  for (const user of users) {
+    const userGroup = userGroups.find((u) => u.user === user.name);
+    if (userGroup) {
+      user.groups = userGroup.groups;
+    }
+  }
+
+  return users;
+}
+
+/**
+ * Retrieves the list of users and their associated groups using WinRM.
+ *
+ * @param payload - The WinRMPayload object containing the necessary credentials and connection details.
+ * @returns A Promise that resolves to an array of UserGroups objects representing the users and their groups.
+ */
+export async function getUsersAndGroups(
+  payload: WinRMPayload,
+): Promise<UserGroups[]> {
+  const query = `Get-LocalUser | 
+  ForEach-Object { 
+      $user = $_
+      return [PSCustomObject]@{ 
+          "User"   = $user.Name
+          "Groups" = Get-LocalGroup | Where-Object {  $user.SID -in ($_ | Get-LocalGroupMember | Select-Object -ExpandProperty "SID") } | Select-Object -ExpandProperty "Name"
+      } 
+  } | Format-List`;
+
+  const context = new winrm.WinRMContext(
+    { username: payload.username, password: payload.password },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
+  );
+  const res = await context.runPowerShell(query);
+  if (res.exitCode !== 0) {
+    return [];
+  }
+  return parseUserGroups(res.stdout);
+}
+
+/**
+ * Retrieves a list of groups from the WinRM server.
+ * @param payload - The WinRM payload containing the necessary information for authentication and connection.
+ * @returns A promise that resolves to an array of GroupModel objects representing the groups retrieved from the server.
+ */
+export async function getGroups(payload: WinRMPayload): Promise<GroupModel[]> {
+  const query =
+    `Get-LocalGroup | Select-Object -Property Name, Description, PrincipalSource | Format-Custom`;
+  const context = new winrm.WinRMContext(
+    { username: payload.username, password: payload.password },
+    {
+      hostname: payload.hostname,
+      port: payload.port,
+      protocol: payload.protocol,
+    },
+  );
+  const res = await context.runPowerShell(query);
+  if (res.exitCode !== 0) {
+    return [];
+  }
+  const groups = processWmiGroup(res.stdout);
+  const userGroups = await getUsersAndGroups(payload);
+
+  for (const group of groups) {
+    const users = userGroups.filter((u) => u.groups.includes(group.name));
+    group.members = users.map((u) => u.user);
+  }
+  return groups;
+}
+
+function parseUserGroups(input: string): UserGroups[] {
+  const userRegex = /User\s+:\s+(.*)/;
+  const groupsRegex = /Groups\s+:\s+(.*)/;
+
+  const usersAndGroups: UserGroups[] = [];
+  let currentUser: UserGroups | null = null;
+
+  input.split("\n").forEach((line) => {
+    const userMatch = userRegex.exec(line);
+    const groupsMatch = groupsRegex.exec(line);
+
+    if (userMatch) {
+      if (currentUser) usersAndGroups.push(currentUser);
+      const user = userMatch[1].trim();
+      currentUser = { user, groups: [] };
+    } else if (groupsMatch && currentUser) {
+      const groups = groupsMatch[1].split(",").map((group) =>
+        group.trim().replace("{", "").replace("}", "")
+      );
+      currentUser.groups = groups;
+    }
+  });
+
+  if (currentUser) usersAndGroups.push(currentUser);
+
+  return usersAndGroups;
 }
 
 async function getProcessorName(payload: WinRMPayload): Promise<string> {
@@ -270,6 +409,65 @@ function processWmiDevice(wmi: string): DeviceModel[] {
       id: idCounter++,
     };
     rtnVal.push(process);
+  }
+
+  return rtnVal;
+}
+
+function processWmiUser(wmi: string): UserModel[] {
+  wmi = wmi.replaceAll("\\", "|");
+  wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const matches = wmi.matchAll(regex);
+  const rtnVal: UserModel[] = [];
+
+  for (const match of matches) {
+    const mt = `  ${match[1]}`;
+    //I'm using parseInt and parseFloat to convert the values to the correct type (unknown at compile time)
+    const user: UserModel = {
+      description: getWmiValue<string>("Description", "Enabled", mt),
+      enabled: getWmiValue<boolean>("Enabled", "FullName", mt),
+      fullName: getWmiValue<string>("FullName", "UserMayChangePassword", mt),
+      userMayChangePassword: getWmiValue<boolean>(
+        "UserMayChangePassword",
+        "PasswordRequired",
+        mt,
+      ),
+      passwordRequired: getWmiValue<boolean>("PasswordRequired", "Name", mt),
+      name: getWmiValue<string>("Name", "PasswordChangeableDate", mt),
+      passwordChangeableDate: getWmiValue<string>(
+        "PasswordChangeableDate",
+        "PasswordLastSet",
+        mt,
+      ),
+      passwordLastSet: getWmiValue<string>("PasswordLastSet", "LastLogon", mt),
+      lastLogon: getWmiValue<string>("LastLogon", "PasswordExpires", mt),
+      passwordExpires: getWmiValue<string>(
+        "PasswordExpires",
+        "PrincipalSource",
+        mt,
+      ),
+    };
+    rtnVal.push(user);
+  }
+
+  return rtnVal;
+}
+
+function processWmiGroup(wmi: string): GroupModel[] {
+  wmi = wmi.replaceAll("\\", "|");
+  wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
+  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const matches = wmi.matchAll(regex);
+  const rtnVal: GroupModel[] = [];
+
+  for (const match of matches) {
+    const mt = `  ${match[1]}`;
+    const group: GroupModel = {
+      name: getWmiValue<string>("Name", "Description", mt),
+      description: getWmiValue<string>("Description", "PrincipalSource", mt),
+    };
+    rtnVal.push(group);
   }
 
   return rtnVal;

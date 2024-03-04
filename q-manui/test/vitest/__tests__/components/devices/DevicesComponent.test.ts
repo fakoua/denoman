@@ -1,9 +1,9 @@
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-vitest';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import DevicesComponent from '../../../../../src/components/devices/DevicesComponent.vue';
+import DevicesComponent from 'src/components/devices/DevicesComponent.vue';
 import { nextTick } from 'vue';
 
 installQuasarPlugin({ plugins: { Notify } });
@@ -61,8 +61,8 @@ describe('devices component', () => {
         }
       },
     });
-    wrapper.vm.isLoading = false;
+    await flushPromises();
     await nextTick()
-    expect(wrapper.html()).toContain('Device Manager')
+    expect(wrapper.html()).toContain('tree-container')
   });
 });

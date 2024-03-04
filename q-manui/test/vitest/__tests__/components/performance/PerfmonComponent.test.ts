@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import PerfmonComponent from '../../../../../src/components/performance/PerfmonComponent.vue';
+import PerfmonComponent from 'src/components/performance/PerfmonComponent.vue';
 import { nextTick } from 'vue';
 import { PerfmonModel, SystemModel } from 'src/components/models';
 

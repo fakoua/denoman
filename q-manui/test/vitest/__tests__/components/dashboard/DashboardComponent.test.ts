@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import DashboardComponent from '../../../../../src/components/dashboard/DashboardComponent.vue';
+import DashboardComponent from 'src/components/dashboard/DashboardComponent.vue';
 import { nextTick } from 'vue';
 
 installQuasarPlugin({ plugins: { Notify } });

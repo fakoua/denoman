@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { Notify } from 'quasar';
 import { describe, expect, it, vi } from 'vitest';
 
-import DependenciesRowComponent from '../../../../../src/components/service-window/DependenciesRowComponent.vue';
+import DependenciesRowComponent from 'src/components/service-window/DependenciesRowComponent.vue';
 import { nextTick } from 'vue';
 import { ServiceModel } from 'src/components/models';
 

@@ -170,3 +170,23 @@ export type TreeModel = {
   color: string,
   children?: TreeModel[],
  }
+
+ export type UserModel = {
+  name: string;
+  fullName: string;
+  description: string;
+  enabled: boolean;
+  userMayChangePassword: boolean;
+  passwordExpires: string;
+  passwordRequired: boolean;
+  passwordChangeableDate: string;
+  lastLogon: string;
+  passwordLastSet: string;
+  groups: string[];
+}
+
+export type GroupModel = {
+  name: string;
+  description: string;
+  members?: string[];
+}

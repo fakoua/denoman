@@ -1,21 +1,95 @@
 <template>
   <div class="container fit row wrap justify-start items-start content-start">
     <div class="s-left">
-      <q-tabs v-model="tab" vertical>
-        <q-tab name="dashboard" icon="dashboard" />
-        <q-tab name="performance" icon="insights" />
-        <q-tab name="services" icon="miscellaneous_services" />
-        <q-tab name="processes" icon="format_list_bulleted" />
-        <q-tab name="devices" icon="bluetooth_audio" />
-        <q-tab name="terminal" icon="terminal" />
-      </q-tabs>
+      <q-list dense padding class="rounded-borders">
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'dashboard'"
+          @click="tab = 'dashboard'"
+          :inset-level="0"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="dashboard" />
+          </q-item-section>
+          <q-item-section> Dashboard </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'performance'"
+          @click="tab = 'performance'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="insights" />
+          </q-item-section>
+          <q-item-section> Performance </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'services'"
+          @click="tab = 'services'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="miscellaneous_services" />
+          </q-item-section>
+          <q-item-section> Services </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'processes'"
+          @click="tab = 'processes'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="format_list_bulleted" />
+          </q-item-section>
+          <q-item-section> Processes </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'users'"
+          @click="tab = 'users'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="people" />
+          </q-item-section>
+          <q-item-section> Users & Groups </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'devices'"
+          @click="tab = 'devices'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="bluetooth_audio" />
+          </q-item-section>
+          <q-item-section> Devices </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          v-ripple
+          :active="tab === 'terminal'"
+          @click="tab = 'terminal'"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="terminal" />
+          </q-item-section>
+          <q-item-section> Terminal </q-item-section>
+        </q-item>
+      </q-list>
     </div>
     <div class="s-right col-grow">
       <q-tab-panels v-model="tab" keep-alive keep-alive-include="performance">
-        <q-tab-panel name="dashboard">
+        <q-tab-panel name="dashboard" style="padding: 0">
           <dashboard-component :host="host" />
         </q-tab-panel>
-        <q-tab-panel name="performance">
+        <q-tab-panel name="performance" style="padding: 0">
           <perfmon-component :host="host" />
         </q-tab-panel>
         <q-tab-panel name="services" style="padding: 0">
@@ -57,13 +131,16 @@
             </template>
           </q-splitter>
         </q-tab-panel>
-        <q-tab-panel name="processes">
+        <q-tab-panel name="processes" style="padding: 0">
           <processes-component :host="host" />
         </q-tab-panel>
-        <q-tab-panel name="devices">
+        <q-tab-panel name="users" style="padding: 0">
+          <users-groups-component :host="host" />
+        </q-tab-panel>
+        <q-tab-panel name="devices" style="padding: 0">
           <devices-component :host="host" />
         </q-tab-panel>
-        <q-tab-panel name="terminal">
+        <q-tab-panel name="terminal" style="padding: 0">
           <terminal-component :host="host" />
         </q-tab-panel>
       </q-tab-panels>
@@ -101,14 +178,23 @@
 </template>
 
 <style lang="css" scoped>
+.q-item__section--avatar {
+  min-width: 26px;
+  padding-right: 0;
+}
+.q-item__section--avatar .material-icons {
+  font-size: 18px;
+}
+
 div.s-left {
+  padding-top: 0;
   overflow: auto;
-  min-width: 50px;
-  max-width: 50px;
+  min-width: 200px;
+  max-width: 200px;
 }
 div.s-right {
   overflow: hidden;
-  width: calc(100vw - 70px);
+  width: calc(100vw - 220px);
   height: calc(100vh - 90px);
   border-left: 1px solid rgba(0, 0, 0, 0.12);
 }
@@ -182,6 +268,7 @@ import DashboardComponent from '../components/dashboard/DashboardComponent.vue';
 import ProcessesComponent from '../components/processes/ProcessesComponent.vue';
 import DevicesComponent from '../components/devices/DevicesComponent.vue';
 import TerminalComponent from '../components/terminal/TerminalComponent.vue';
+import UsersGroupsComponent from '../components/users/UsersGroupsComponent.vue';
 
 import { ServiceModel, WinRMPayload } from './models';
 
@@ -196,6 +283,7 @@ export default defineComponent({
     ProcessesComponent,
     TerminalComponent,
     DevicesComponent,
+    UsersGroupsComponent,
   },
   props: {
     host: {
