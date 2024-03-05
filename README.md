@@ -1,5 +1,7 @@
 # denoman
 
+[Check how to Run](#Run)
+
 DenoMan is a comprehensive web application designed specifically for managing
 Windows computers and servers. With features like Service Manager, Dashboard,
 and PerfMon, DenoMan offers a complete solution for monitoring and managing your
@@ -25,6 +27,12 @@ winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
 ## Run
 
 Run the following command and see the magic!
+
+```ps
+deno run -A jsr:@fakoua/denoman
+```
+
+Or
 
 ```ps
 deno run -A --reload https://deno.land/x/denoman/mod.ts

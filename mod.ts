@@ -3,7 +3,7 @@ import { ensureDir, exists } from "@std/fs";
 
 import { Application, Router, RouterContext } from "@oak/oak";
 
-import { oakCors } from "oakcors";
+import { oakCors } from "./vendor/deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getProcesses } from "./src/processes.ts";
