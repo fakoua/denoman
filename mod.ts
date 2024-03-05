@@ -1,13 +1,9 @@
 import { join } from "@std/path";
-import { exists, ensureDir } from "@std/fs";
+import { ensureDir, exists } from "@std/fs";
 
-import {
-  Application,
-  Router,
-  RouterContext,
-} from "@oak/oak";
+import { Application, Router, RouterContext } from "@oak/oak";
 
-import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
+import { oakCors } from "oakcors";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getProcesses } from "./src/processes.ts";

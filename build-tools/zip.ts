@@ -1,6 +1,6 @@
-import { compress, decompress } from "https://deno.land/x/zip@v1.2.5/mod.ts";
+import { compress, decompress } from "@fakoua/zip-ts";
 
-import { join } from "https://deno.land/std@0.218.2/path/mod.ts";
+import { join } from "@std/path";
 
 export const zipCompress = async (
   files: string | string[],
