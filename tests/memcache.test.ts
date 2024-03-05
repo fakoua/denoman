@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.218.2/assert/assert_equals.ts";
+import { assertEquals } from "@std/assert";
 import { get, has, put } from "../src/memcache.ts";
 
 // Mock window object

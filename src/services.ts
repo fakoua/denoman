@@ -1,5 +1,5 @@
-import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
-import { delay } from "https://deno.land/std@0.218.2/async/delay.ts";
+import * as winrm from "@fakoua/winrm";
+import { delay } from "@std/async";
 import { DependenciesModel, ServiceModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 

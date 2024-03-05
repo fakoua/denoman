@@ -1,4 +1,4 @@
-import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
+import * as winrm from "@fakoua/winrm";
 import { getWmiValue } from "./wmiutils.ts";
 import {
   DeviceModel,

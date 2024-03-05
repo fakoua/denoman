@@ -12,5 +12,14 @@
   },
   "test": {
     "exclude": ["q-manui/", "Gruntfile.js"]
+  },
+  "imports": {
+    "@fakoua/winrm": "jsr:@fakoua/winrm@^0.6.4",
+    "@oak/oak": "jsr:@oak/oak@^14.2.0",
+    "@std/assert": "jsr:@std/assert@^0.218.2",
+    "@std/async": "jsr:@std/async@^0.218.2",
+    "@std/cli": "jsr:@std/cli@^0.218.2",
+    "@std/fs": "jsr:@std/fs@^0.218.2",
+    "@std/path": "jsr:@std/path@^0.218.2"
   }
 }

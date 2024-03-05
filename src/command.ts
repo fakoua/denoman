@@ -1,7 +1,7 @@
-import * as winrm from "https://deno.land/x/deno_winrm@0.6/mod.ts";
+import * as winrm from "@fakoua/winrm";
 
 import { WinRMPayload } from "./models.ts";
-import { ShellResponse } from "https://deno.land/x/deno_winrm@0.6/src/common.ts";
+import { ShellResponse } from "@fakoua/winrm/types";
 
 export async function executeCommand(
   payload: WinRMPayload,

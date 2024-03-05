@@ -1,4 +1,4 @@
-import { parseArgs } from "https://deno.land/std@0.218.2/cli/parse_args.ts";
+import { parseArgs } from "@std/cli";
 
 import { zipToTs } from "./build-tools/binToTs.ts";
 import { zipCompress } from "./build-tools/zip.ts";

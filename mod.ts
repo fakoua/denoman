@@ -1,12 +1,12 @@
-import { join } from "https://deno.land/std@0.218.2/path/join.ts";
-import { exists } from "https://deno.land/std@0.218.2/fs/exists.ts";
-import { ensureDir } from "https://deno.land/std@0.218.2/fs/ensure_dir.ts";
+import { join } from "@std/path";
+import { exists, ensureDir } from "@std/fs";
 
 import {
   Application,
   Router,
   RouterContext,
-} from "https://deno.land/x/oak@v14.1.1/mod.ts";
+} from "@oak/oak";
+
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 
 import { actions, getDependsServices, getServices } from "./src/services.ts";
