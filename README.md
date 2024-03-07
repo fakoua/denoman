@@ -1,9 +1,20 @@
 # denoman
+[![denoman deno](https://github.com/fakoua/denoman/actions/workflows/deno.yml/badge.svg)](https://github.com/fakoua/denoman)
 [![jsr.io/@fakoua/denoman](https://jsr.io/badges/@fakoua/denoman)](https://jsr.io/@fakoua/denoman)
 [![jsr.io/@fakoua/denoman score](https://jsr.io/badges/@fakoua/denoman/score)](https://jsr.io/@fakoua/denoman)
 [![deno.land/x/denoman](https://deno.land/badge/denoman/version)](https://deno.land/x/denoman)
 
-[![denoman deno](https://github.com/fakoua/denoman/actions/workflows/deno.yml/badge.svg)](https://github.com/fakoua/denoman)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=bugs)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=coverage)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=fakoua_denoman&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=fakoua_denoman)
 
 [Check how to Run](#Run)
 
