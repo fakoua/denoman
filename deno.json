@@ -1,6 +1,6 @@
 {
   "name": "@fakoua/denoman",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "exports": "./mod.ts",
 
   "tasks": {
@@ -25,6 +25,7 @@
     "@std/async": "jsr:@std/async@^0.218.2",
     "@std/cli": "jsr:@std/cli@^0.218.2",
     "@std/fs": "jsr:@std/fs@^0.218.2",
+    "@std/log": "jsr:@std/log@^0.218.2",
     "@std/path": "jsr:@std/path@^0.218.2"
   },
   "importMap": "./vendor/import_map.json"

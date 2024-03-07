@@ -38,6 +38,17 @@ Or
 deno run -A --reload https://deno.land/x/denoman/mod.ts
 ```
 
+For logging:
+
+```
+deno run -A jsr:@fakoua/denoman --log-request --level=debug
+```
+
+- **--log-request**: to trace all the requests on the console (recommended for
+  debuging)
+- **--level**: to log the actions and functions (debug, info, warn, error,
+  critical). default is 'info'
+
 ## Screenshots
 
 ![DenoMan Dashboard](https://github.com/fakoua/denoman/blob/main/resources/ss01.png?raw=true)

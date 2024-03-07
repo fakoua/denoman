@@ -1,4 +1,6 @@
 import * as winrm from "@fakoua/winrm";
+import * as logging from "./logging.ts";
+
 import { getWmiValue } from "./wmiutils.ts";
 import {
   DeviceModel,
@@ -18,6 +20,7 @@ import {
  * @returns A Promise that resolves to a SystemModel object representing the system information.
  */
 export async function getSystem(payload: WinRMPayload): Promise<SystemModel> {
+  logging.debug(`Getting system information from ${payload.hostname}`);
   const query_Win32_OperatingSystem =
     "Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -Property Caption, CSName, OSArchitecture, SystemDrive| Format-Custom -Depth 1";
   const context = new winrm.WinRMContext(
@@ -43,6 +46,7 @@ export async function getSystem(payload: WinRMPayload): Promise<SystemModel> {
  * @returns A Promise that resolves to a PerfmonModel object containing the performance data.
  */
 export async function getPerfmon(payload: WinRMPayload): Promise<PerfmonModel> {
+  logging.debug(`Getting performance data from ${payload.hostname}`);
   const query =
     "Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average | Select Average, Count | Format-Custom";
 
@@ -99,6 +103,7 @@ export async function getPerfmon(payload: WinRMPayload): Promise<PerfmonModel> {
 export async function getDevices(
   payload: WinRMPayload,
 ): Promise<DeviceModel[]> {
+  logging.debug(`Getting devices from ${payload.hostname}`);
   const query =
     `Get-PnpDevice | Select-Object -Property Caption, Description, Status, Manufacturer, Class, Problem | Format-Custom`;
   const context = new winrm.WinRMContext(
@@ -111,7 +116,7 @@ export async function getDevices(
   );
   const res = await context.runPowerShell(query);
   if (res.exitCode !== 0) {
-    console.log(res);
+    logging.error(`Error in getDevices: ${res.stderr}`);
     return [];
   }
   return processWmiDevice(res.stdout);
@@ -123,6 +128,7 @@ export async function getDevices(
  * @returns A Promise that resolves to an array of UserModel objects.
  */
 export async function getUsers(payload: WinRMPayload): Promise<UserModel[]> {
+  logging.debug(`Getting users from ${payload.hostname}`);
   const query =
     `Get-LocalUser | Select-Object -Property Description, Enabled, FullName, UserMayChangePassword, PasswordRequired, Name, @{Name="PasswordChangeableDate";Expression={$_.PasswordChangeableDate.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="PasswordLastSet";Expression={$_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="LastLogon";Expression={$_.LastLogon.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="PasswordExpires";Expression={$_.PasswordExpires.ToString("yyyy-MM-dd HH:mm:ss")}}, PrincipalSource | Format-Custom`;
   const context = new winrm.WinRMContext(
@@ -160,6 +166,7 @@ export async function getUsers(payload: WinRMPayload): Promise<UserModel[]> {
 export async function getUsersAndGroups(
   payload: WinRMPayload,
 ): Promise<UserGroups[]> {
+  logging.debug(`Getting users and groups from ${payload.hostname}`);
   const query = `Get-LocalUser | 
   ForEach-Object { 
       $user = $_
@@ -190,6 +197,7 @@ export async function getUsersAndGroups(
  * @returns A promise that resolves to an array of GroupModel objects representing the groups retrieved from the server.
  */
 export async function getGroups(payload: WinRMPayload): Promise<GroupModel[]> {
+  logging.debug(`Getting groups from ${payload.hostname}`);
   const query =
     `Get-LocalGroup | Select-Object -Property Name, Description, PrincipalSource | Format-Custom`;
   const context = new winrm.WinRMContext(

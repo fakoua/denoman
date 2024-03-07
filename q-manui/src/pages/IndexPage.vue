@@ -96,35 +96,44 @@
                   lazy-rules
                   :rules="[(val) => !!val || 'Field is required']"
                 />
+
                 <div>
-                  <div>Server:</div>
                   <div
                     class="server-pattern fit row wrap justify-start items-start content-start"
                   >
-                    <q-input
-                      v-model="protocol"
-                      dense
-                      maxlength="5"
-                      autocomplete="off"
-                      lazy-rules
-                      :rules="[(val) => !!val || '*']"
-                      style="width: 40px"
-                    />
-                    <div class="server-static">://</div>
-                    <div class="server-static">{{ hostname }}:</div>
-                    <div>
-                      <q-input
-                        v-model="port"
-                        dense
-                        type="number"
-                        autocomplete="off"
-                        lazy-rules
-                        :rules="[(val) => !!val || '*']"
-                        style="width: 50px"
-                      />
-                    </div>
-                    <div class="server-static">/wsman</div>
+                    Server:
+                    <span style="font-weight: 600">
+                      {{ protocol }}://{{ hostname === '' ? '*' : hostname }}:{{
+                        port
+                      }}/wsman</span
+                    >
                   </div>
+                </div>
+                <div>
+                  <q-expansion-item expand-separator label="Details">
+                    <q-card>
+                      <q-card-section>
+                        <q-input
+                          v-model="protocol"
+                          label="Protocol"
+                          dense
+                          maxlength="5"
+                          autocomplete="off"
+                          lazy-rules
+                          :rules="[(val) => !!val || '*']"
+                        />
+                        <q-input
+                          v-model="port"
+                          label="Port"
+                          dense
+                          type="number"
+                          autocomplete="off"
+                          lazy-rules
+                          :rules="[(val) => !!val || '*']"
+                        />
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
                 </div>
               </q-card-section>
             </q-card>
@@ -231,7 +240,7 @@ export default defineComponent({
 
     const closeTab = (hostname: string) => {
       hostStore.hosts = hostStore.hosts.filter(
-        (host) => host.hostname != hostname
+        (host) => host.hostname != hostname,
       );
       if (hostStore.hosts.length == 0) {
         showAddDialog.value = true;

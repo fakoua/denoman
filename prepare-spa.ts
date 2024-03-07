@@ -1,5 +1,5 @@
 import { parseArgs } from "@std/cli";
-
+import * as log from "@std/log";
 import { zipToTs } from "./build-tools/binToTs.ts";
 import { zipCompress } from "./build-tools/zip.ts";
 
@@ -8,7 +8,6 @@ const flags = parseArgs(Deno.args, {
 });
 
 const action = flags.action;
-console.log("Action:", flags);
 if (action === "set-version") {
   const version = flags.version || "0.0.1";
   await increaseUiVersion(version);
@@ -29,17 +28,17 @@ async function increaseUiVersion(version: string) {
   packageJson = JSON.stringify(pkg, null, 2);
 
   await Deno.writeTextFile(packageFile, packageJson);
-  console.log("package.json file updated.");
+  log.getLogger().info("package.json file updated.");
 }
 
 async function spaToTypeScript() {
-  console.log("Compressing [q-manui/dist/spa] ...");
+  log.getLogger().info("Compressing [q-manui/dist/spa] ...");
   await zipCompress("./q-manui/dist/spa", "./q-manui/dist/ui.zip", {
     overwrite: true,
     flags: [],
   });
 
-  console.log("Converting [q-manui/dist/ui.zip] to [ui.ts]");
+  log.getLogger().info("Converting [q-manui/dist/ui.zip] to [ui.ts]");
   await zipToTs("./q-manui/dist", "ui");
-  console.log("[ui.ts] created.");
+  log.getLogger().info("[ui.ts] created.");
 }

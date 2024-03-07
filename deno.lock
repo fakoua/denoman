@@ -118,6 +118,7 @@
       "@std/log@0.218.2": {
         "integrity": "0e21789e8c918961a9997f9659f53ef490857f6ed543961d04501e6ba9f2e373",
         "dependencies": [
+          "jsr:@std/assert@^0.218.2",
           "jsr:@std/fmt@^0.218.2",
           "jsr:@std/fs@^0.218.2"
         ]
@@ -1237,6 +1238,7 @@
       "jsr:@std/async@^0.218.2",
       "jsr:@std/cli@^0.218.2",
       "jsr:@std/fs@^0.218.2",
+      "jsr:@std/log@^0.218.2",
       "jsr:@std/path@^0.218.2"
     ],
     "packageJson": {

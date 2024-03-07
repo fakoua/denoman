@@ -1,3 +1,15 @@
+import { RouterContext } from "jsr:@oak/oak@^14.2.0/router";
+
+export type ContextApiName = RouterContext<
+  "/api/:apiName",
+  {
+    apiName: string;
+  } & Record<string | number, string | undefined>,
+  // NOSONAR
+  // deno-lint-ignore no-explicit-any
+  Record<string, any>
+>;
+
 export type ServiceModel = {
   acceptPause: boolean;
   acceptStop: boolean;

@@ -1,10 +1,10 @@
 import { join } from "@std/path";
 import { ensureDir, exists } from "@std/fs";
+import { Application, Router } from "@oak/oak";
+import { parseArgs } from "@std/cli";
 
-import { Application, Router, RouterContext } from "@oak/oak";
-
+import * as logging from "./src/logging.ts";
 import { oakCors } from "./vendor/deno.land/x/cors@v1.2.2/mod.ts";
-
 import { actions, getDependsServices, getServices } from "./src/services.ts";
 import { getProcesses } from "./src/processes.ts";
 import {
@@ -17,6 +17,7 @@ import {
 import { executeCommand } from "./src/command.ts";
 import * as cache from "./src/memcache.ts";
 import {
+  ContextApiName,
   DependenciesModel,
   GroupModel,
   ServiceModel,
@@ -25,16 +26,26 @@ import {
   WinRMPayload,
 } from "./src/models.ts";
 import { initServer } from "./build-tools/binToTs.ts";
+import { LevelName } from "jsr:@std/log@^0.218.2/levels";
 
-type ContextApiName = RouterContext<
-  "/api/:apiName",
-  {
-    apiName: string;
-  } & Record<string | number, string | undefined>,
-  // NOSONAR
-  // deno-lint-ignore no-explicit-any
-  Record<string, any>
->;
+const flags = parseArgs(Deno.args, {
+  boolean: ["log-request"],
+  string: ["level"],
+  default: { "log-request": false, level: "INFO" },
+});
+
+let logLevel = flags.level.toUpperCase();
+
+if (
+  !(logLevel === "NOTSET" || logLevel === "DEBUG" || logLevel === "INFO" ||
+    logLevel === "WARN" || logLevel === "ERROR" || logLevel === "CRITICAL")
+) {
+  logLevel = "INFO";
+}
+
+logging.initLogger(logLevel as LevelName, flags["log-request"]);
+
+logging.info("Starting server...");
 
 await initServer(await getWwwRoot());
 
@@ -42,7 +53,7 @@ const router = new Router();
 
 router.get("/api/exit", (ctx) => {
   ctx.response.body = true;
-  console.log("Exiting...");
+  logging.info("Exiting...");
   setTimeout(() => {
     Deno.exit(0);
   }, 200);
@@ -121,6 +132,11 @@ router.post("/api/command", async (ctx) => {
 const app = new Application();
 let wwwRoot: string | undefined = undefined;
 
+app.use(async (ctx, next) => {
+  await next();
+  logging.logRequest(`${ctx.request.method} ${ctx.request.url.pathname}`);
+});
+
 app.use(oakCors()); // Enable CORS for All Routes
 app.use(router.allowedMethods());
 app.use(router.routes());
@@ -139,40 +155,39 @@ app.use(async (context, next) => {
   }
 });
 
-console.log("Listening to http://localhost:8001");
+logging.info("Listening to http://localhost:8001");
+logging.info("Press Ctrl+C to exit...");
 
 await app.listen({ port: 8001 });
 
 async function handleService(ctx: ContextApiName, payload: WinRMPayload) {
-  let services: ServiceModel[];
-  if (cache.has(`${payload.hostname}-services`)) {
-    services = cache.get(`${payload.hostname}-services`)!;
-  } else {
-    services = await getServices(payload);
-    cache.put(`${payload.hostname}-services`, services);
-  }
+  const services = await cache.getObject<ServiceModel[]>(
+    `${payload.hostname}-services`,
+    async () => {
+      return await getServices(payload);
+    },
+  );
+
   ctx.response.body = services;
 }
 
 async function handleDependencies(ctx: ContextApiName, payload: WinRMPayload) {
-  let deps: Array<DependenciesModel>;
-  if (cache.has(`${payload.hostname}-dependencies`)) {
-    deps = cache.get(`${payload.hostname}-dependencies`)!;
-  } else {
-    deps = await getDependsServices(payload);
-    cache.put(`${payload.hostname}-dependencies`, deps);
-  }
+  const deps = await cache.getObject<DependenciesModel[]>(
+    `${payload.hostname}-dependencies`,
+    async () => {
+      return await getDependsServices(payload);
+    },
+  );
   ctx.response.body = deps;
 }
 
 async function handleSystem(ctx: ContextApiName, payload: WinRMPayload) {
-  let system: SystemModel;
-  if (cache.has(`${payload.hostname}-system-info`)) {
-    system = cache.get(`${payload.hostname}-system-info`)!;
-  } else {
-    system = await getSystem(payload);
-    cache.put(`${payload.hostname}-system-info`, system);
-  }
+  const system = await cache.getObject<SystemModel>(
+    `${payload.hostname}-system-info`,
+    async () => {
+      return await getSystem(payload);
+    },
+  );
   ctx.response.body = system;
 }
 
@@ -192,24 +207,22 @@ async function handleDevice(ctx: ContextApiName, payload: WinRMPayload) {
 }
 
 async function handleUsers(ctx: ContextApiName, payload: WinRMPayload) {
-  let users: UserModel[];
-  if (cache.has(`${payload.hostname}-users`)) {
-    users = cache.get(`${payload.hostname}-users`)!;
-  } else {
-    users = await getUsers(payload);
-    cache.put(`${payload.hostname}-users`, users);
-  }
+  const users = await cache.getObject<UserModel[]>(
+    `${payload.hostname}-users`,
+    async () => {
+      return await getUsers(payload);
+    },
+  );
   ctx.response.body = users;
 }
 
 async function handleGroups(ctx: ContextApiName, payload: WinRMPayload) {
-  let groups: GroupModel[];
-  if (cache.has(`${payload.hostname}-groups`)) {
-    groups = cache.get(`${payload.hostname}-groups`)!;
-  } else {
-    groups = await getGroups(payload);
-    cache.put(`${payload.hostname}-groups`, groups);
-  }
+  const groups = await cache.getObject<GroupModel[]>(
+    `${payload.hostname}-groups`,
+    async () => {
+      return await getGroups(payload);
+    },
+  );
   ctx.response.body = groups;
 }
 

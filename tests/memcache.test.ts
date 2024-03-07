@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { get, has, put } from "../src/memcache.ts";
+import { get, getObject, has, put } from "../src/memcache.ts";
 
 // Mock window object
 // deno-lint-ignore no-explicit-any
@@ -34,4 +34,11 @@ Deno.test("put should update an existing object in the cache", () => {
   const obj = "updated";
   put("test", obj);
   assertEquals(get("test"), obj);
+});
+
+Deno.test("getObject should return the object", async () => {
+  const obj = await getObject<string>("hello", () => {
+    return Promise.resolve("Hello");
+  });
+  assertEquals(obj, "Hello");
 });

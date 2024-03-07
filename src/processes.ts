@@ -1,4 +1,6 @@
 import * as winrm from "@fakoua/winrm";
+import * as logging from "./logging.ts";
+
 import { ProcessModel, WinRMPayload } from "./models.ts";
 import { getWmiValue } from "./wmiutils.ts";
 
@@ -13,11 +15,12 @@ export async function getProcesses(
       protocol: payload.protocol,
     },
   );
+  logging.debug(`Getting processes from ${payload.hostname}`);
   const query =
     `Get-Process | Select-Object -Property ProcessName, Id, CPU, WS, VM, @{Name="StartTime";Expression={$_.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}}, @{Name="END";Expression={""}} | Format-Custom -Depth 1`;
   const res = await context.runPowerShell(query);
   if (res.exitCode !== 0) {
-    console.log(res);
+    logging.error(`Error in getProcess ${res.stderr}`);
     return [];
   }
   return processWmi(res.stdout);

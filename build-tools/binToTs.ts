@@ -1,22 +1,25 @@
 import { join } from "@std/path";
 import { copy } from "@std/fs";
+import * as log from "@std/log";
 
 import { bin, version } from "../wwwzip/ui.ts";
 import { zipDecompress } from "./zip.ts";
 
 export async function initServer(wwwRoot: string): Promise<boolean> {
   try {
+    log.getLogger().info("Initializing server...");
     const indexFile = join(wwwRoot, "index.html");
     const isExist = await exists(indexFile);
     if (isExist) {
       //Check for update
       const installedVersion = await getUiVersion(indexFile);
-
       if (installedVersion === version) {
         return true;
       }
 
-      console.log(`Updating UI from V${installedVersion} to V${version}`);
+      log.getLogger().info(
+        `Updating UI from V${installedVersion} to V${version}`,
+      );
       //We need to remove old version
       await Deno.remove(indexFile);
       await Deno.remove(join(wwwRoot, "favicon.ico"));
@@ -46,7 +49,7 @@ export async function initServer(wwwRoot: string): Promise<boolean> {
     await Deno.remove(spa, { recursive: true });
     return true;
   } catch (err) {
-    console.log(err);
+    log.getLogger().error(err);
     return false;
   }
 }
@@ -62,6 +65,7 @@ export async function initServer(wwwRoot: string): Promise<boolean> {
  * @returns {*}
  */
 export async function zipToTs(path: string, fileName: string) {
+  log.getLogger().info(`Converting ${fileName}.zip to ${fileName}.ts`);
   const version = await getUiVersion(join(path, `spa\\index.html`));
 
   const binPath = join(path, `${fileName}.zip`);
@@ -97,6 +101,7 @@ export const bin=\`${base64}\``;
  * @returns {Promise<string>}
  */
 export async function tsToZip(wwwRoot: string): Promise<string> {
+  log.getLogger().info("Converting ts to zip");
   const binContent = atob(bin);
   const binArray = new Uint8Array(binContent.length);
 
@@ -111,6 +116,7 @@ export async function tsToZip(wwwRoot: string): Promise<string> {
 }
 
 async function getUiVersion(indexFile: string): Promise<string> {
+  log.getLogger().info("Getting UI version");
   const content = await Deno.readTextFile(indexFile);
   const regEx = /content="DenoMan\s(.*?)">/gm;
   const matches = content.matchAll(regEx);

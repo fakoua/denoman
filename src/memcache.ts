@@ -55,6 +55,29 @@ export function put(key: string, obj: IgnoreAny) {
   }
 }
 
+/**
+ * Retrieves an object from the cache with the specified key. If the object is not found in the cache,
+ * the provided callback function is executed to fetch the object, which is then stored in the cache
+ * before being returned.
+ *
+ * @param key - The key of the object to retrieve from the cache.
+ * @param callback - A callback function that returns a Promise resolving to the object to be stored in the cache.
+ * @returns A Promise that resolves to the retrieved object from the cache.
+ * @template T - The type of the object to retrieve and store in the cache.
+ */
+export async function getObject<T>(
+  key: string,
+  callback: () => Promise<T>,
+): Promise<T> {
+  if (has(key)) {
+    return get<T>(key) as T;
+  } else {
+    const obj = await callback();
+    put(key, obj);
+    return obj;
+  }
+}
+
 function openCache(): Array<CacheEntity> {
   if ((window as IgnoreAny).GlobalCache === undefined) {
     (window as IgnoreAny).GlobalCache = [];

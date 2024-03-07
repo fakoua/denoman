@@ -1,4 +1,5 @@
 import * as winrm from "@fakoua/winrm";
+import * as logging from "./logging.ts";
 
 import { WinRMPayload } from "./models.ts";
 import { ShellResponse } from "@fakoua/winrm/types";
@@ -8,6 +9,7 @@ export async function executeCommand(
   command: string,
   isPowerShell: boolean,
 ): Promise<ShellResponse> {
+  logging.debug(`Executing command '${command}' on ${payload.hostname}`);
   const context = new winrm.WinRMContext(
     { username: payload.username, password: payload.password },
     {
