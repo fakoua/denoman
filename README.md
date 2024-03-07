@@ -1,4 +1,9 @@
 # denoman
+[![jsr.io/@fakoua/denoman](https://jsr.io/badges/@fakoua/denoman)](https://jsr.io/@fakoua/denoman)
+[![jsr.io/@fakoua/denoman score](https://jsr.io/badges/@fakoua/denoman/score)](https://jsr.io/@fakoua/denoman)
+[![deno.land/x/denoman](https://deno.land/badge/denoman/version)](https://deno.land/x/denoman)
+
+[![denoman deno](https://github.com/fakoua/denoman/actions/workflows/deno.yml/badge.svg)](https://github.com/fakoua/denoman)
 
 [Check how to Run](#Run)
 
