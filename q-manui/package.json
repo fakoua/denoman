@@ -24,7 +24,7 @@
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
-    "quasar": "^2.14.6",
+    "quasar": "^2.15.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue3-apexcharts": "1.5.2"
