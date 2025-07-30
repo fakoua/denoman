@@ -179,7 +179,7 @@ function processDependsWmi(wmi: string): Array<DependenciesModel> {
  */
 function processWmi(wmi: string, isSystemDriver: boolean): ServiceModel[] {
   wmi = wmi.replaceAll("\\", "|");
-  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: ServiceModel[] = [];
 

@@ -282,7 +282,7 @@ async function getMemory(payload: WinRMPayload): Promise<string> {
 }
 
 function getRootMatches(wmi: string): IterableIterator<RegExpMatchArray> {
-  const regexRoot = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regexRoot = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   wmi = wmi.replaceAll("\\", "|");
   const matches = wmi.matchAll(regexRoot);
   return matches;
@@ -399,7 +399,7 @@ function process_Disk_Wmi(wmi: string): DiskModel[] {
 function processWmiDevice(wmi: string): DeviceModel[] {
   wmi = wmi.replaceAll("\\", "|");
   wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
-  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: DeviceModel[] = [];
 
@@ -425,7 +425,7 @@ function processWmiDevice(wmi: string): DeviceModel[] {
 function processWmiUser(wmi: string): UserModel[] {
   wmi = wmi.replaceAll("\\", "|");
   wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
-  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: UserModel[] = [];
 
@@ -465,7 +465,7 @@ function processWmiUser(wmi: string): UserModel[] {
 function processWmiGroup(wmi: string): GroupModel[] {
   wmi = wmi.replaceAll("\\", "|");
   wmi = wmi.replaceAll("\r\n\r\n", "\r\n");
-  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: GroupModel[] = [];
 

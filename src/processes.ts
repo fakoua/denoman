@@ -28,7 +28,7 @@ export async function getProcesses(
 
 function processWmi(wmi: string): ProcessModel[] {
   wmi = wmi.replaceAll("\\", "|");
-  const regex = /\{([^{}]+)\}.?/gims; // match withing class ManagementObject { ... }
+  const regex = /\{([^{}]+)\}.?/gims; // match within class ManagementObject { ... }
   const matches = wmi.matchAll(regex);
   const rtnVal: ProcessModel[] = [];
 
